@@ -2,6 +2,7 @@
 #define Sprite_h
 
 #include <stdbool.h>
+#include "TexturedRectangle.h"
 
 typedef struct {
 	char id[16]; 
@@ -20,7 +21,6 @@ typedef struct {
 } ActionFrame;
 
 typedef struct {
-	Frame* frame;
 	char name[16];
 	char value[16];
 	ActionFrame* actionFrames;
@@ -35,6 +35,9 @@ typedef struct Sprite {
 	int actionsLen;
 	float x;				//x坐标
 	float y;				//y坐标
+	int w;
+	int h;
+	TexturedRectangle* m_texture;
 	float ax;			//ax加速度
 	float ay;			//ay加速度
 	float vx;			//vx速度
@@ -55,18 +58,27 @@ typedef struct Sprite {
 	bool autoNextFrame;		//是否自动步进
 	void (*simulatorCallBack)(void* charactor);
 	void (*actionCallBack)(void* charactor, const char* actionName);
+	void (*onEnd)(void* charactor);
 } Sprite;
 
 Sprite* Sprite_Create();
 void Sprite_init(Sprite* sprite, const char* fileName);
 void Sprite_Destroy(Sprite* sprite);
+int Sprite_GetActionId(Sprite* sprite, const char* actionName);
+
+void Sprite_Render(Sprite* entity);
+void Sprite_AddTexturedRectangle(Sprite* sprite, SDL_Renderer* renderer, const char* spritepath, SDL_Rect* srcRect);
+void Sprite_SetPosition(Sprite* sprite, float x, float y);
+void Sprite_SetDimensions(Sprite* sprite, int w, int h);
+TexturedRectangle* Sprite_GetTexturedRectangle(Sprite* sprite);
 
 void Sprite_NextFrame(Sprite* sprite, void* charactor);
-void Sprite_nextActionFrame(Sprite* sprite);
+void Sprite_nextActionFrame(Sprite* sprite, void* charactor);
 
 void Sprite_SetSimulatorCallBack(Sprite* app, void (*func)(void*));
 void Sprite_simulatorCallBack(Sprite* sprite, void* charactor);
 void Sprite_SetActionCallBack(Sprite* sprite, void (*func)(void* charactor, const char* actionName));
 void Sprite_DoAction(Sprite* sprite, void* charactor, const char* actionName);
+void Sprite_SetOnEnd(Sprite* sprite, void (*func)(void* charactor));
 
 #endif

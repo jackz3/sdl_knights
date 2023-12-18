@@ -8,12 +8,18 @@ ResourceManager* ResourceManager_GetInstance() {
     static ResourceManager* manager = NULL;
     if (manager == NULL) {
         manager = (ResourceManager*)malloc(sizeof(ResourceManager));
+        if (manager == NULL) {
+          printf("create res manager fail!\n");
+          return NULL;
+        }
         manager->images = NULL;
         manager->imgCount = 0;
         manager->fonts = NULL;
         manager->fontCount = 0;
         manager->sounds = NULL;
         manager->soundCount = 0;
+        manager->musicList = NULL;
+        manager->musicCount = 0;
 
         int flags = IMG_INIT_PNG;
         int initStatus = IMG_Init(flags);

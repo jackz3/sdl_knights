@@ -6,9 +6,9 @@
 #include "util.h"
 #include "sdl_app.h"
 #include "TexturedRectangle.h"
-#include "GameEntity.h"
 #include "DynamicText.h"
 #include "ResourceManager.h"
+#include "EntityManager.h"
 #include "Music.h"
 #include "Sound.h"
 #include "config.h"
@@ -89,7 +89,8 @@ void HandleEvents()
 void HandleUpdate(Uint32 delta)
 {
     printf("updating\n");
-    Sprite_NextFrame(prophet->entity->m_sprite, prophet);
+    // Sprite_NextFrame(prophet->sprite, prophet);
+    EntityManager_Simulate(EntityManager_GetInstance()); 
 }
 
 // Handle the rendering of the game entities
@@ -104,7 +105,8 @@ void HandleRendering()
     TexturedRectangle_SetSrcPosition(midBg->m_texture, cam->x, 0);
     BG_Render(midBg);
     printf("rendering\n");
-    GameEntity_RenderSprite(prophet->entity);
+    // Sprite_Render(prophet->sprite);
+    EntityManager_Render(EntityManager_GetInstance());
 
     Camera_Adjust(cam);
     TexturedRectangle_SetSrcPosition(nearBg->m_texture, cam->x, 0);
@@ -139,7 +141,7 @@ int main(int argc, char *argv[])
     BG_AddTexture(nearBg, app->renderer, "./assets/images/stage1_1_f.png", &srcRect);
 
     ResourceManager_LoadSound(rm, "bonus", "./assets/sounds/bonus.mp3");
-    // ResourceManager_LoadMusic(rm, "bg", "./assets/sounds/bg.mp3");
+    ResourceManager_LoadMusic(rm, "bg", "./assets/sounds/bg.mp3");
     // Music_Play(ResourceManager_GetMusic(rm, "bg"), -1);
 
     prophet = Prophet_Create(280, 165);

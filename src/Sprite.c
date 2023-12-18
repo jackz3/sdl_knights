@@ -10,32 +10,52 @@
 Sprite *Sprite_Create()
 {
   Sprite *sprite = (Sprite *)malloc(sizeof(Sprite));
-  sprite->resourceID = 0;
-  sprite->frames = NULL;
-  sprite->framesLen = 0;
-  sprite->actions = NULL;
-  sprite->x = 0;
-  sprite->y = 0;
-  sprite->ax = 0;
-  sprite->ay = 0;
-  sprite->vx = 0;
-  sprite->vy = 0;
-  sprite->sx = 0;
-  sprite->sy = 0;
-  sprite->toward = 0;
-  sprite->actionIndex = 0;
-  sprite->loop = false;
-  sprite->blink = false;
-  sprite->blinkState = false;
-  sprite->display = false;
-  sprite->frameIndex = 0;
-  sprite->frameCount = 0;
-  sprite->flash = false;
-  sprite->flashState = false;
-  sprite->autoNextFrame = true;
-  sprite->simulatorCallBack = NULL;
-  sprite->actionCallBack = NULL;
+  if (sprite != NULL)
+  {
+    sprite->m_texture = NULL;
+    sprite->resourceID = 0;
+    sprite->frames = NULL;
+    sprite->framesLen = 0;
+    sprite->actions = NULL;
+    sprite->x = 0;
+    sprite->y = 0;
+    sprite->ax = 0;
+    sprite->ay = 0;
+    sprite->vx = 0;
+    sprite->vy = 0;
+    sprite->sx = 0;
+    sprite->sy = 0;
+    sprite->toward = 0;
+    sprite->actionIndex = 0;
+    sprite->loop = false;
+    sprite->blink = false;
+    sprite->blinkState = false;
+    sprite->display = false;
+    sprite->frameIndex = 0;
+    sprite->frameCount = 0;
+    sprite->flash = false;
+    sprite->flashState = false;
+    sprite->autoNextFrame = true;
+    sprite->simulatorCallBack = NULL;
+    sprite->actionCallBack = NULL;
+    sprite->onEnd = NULL;
+  }
   return sprite;
+}
+
+int Sprite_GetActionId(Sprite* sprite, const char* actionName) {
+		Action* actions = sprite->actions;
+		int ret = 0;
+		for (int n = 0, m = sprite->actionsLen; n < m; n++){
+      char* lowerName = toLowerCase(actions[n].name);
+			if (strcmp(lowerName, actionName) == 0) {
+				ret = n;
+        free(lowerName);
+        break;
+			}
+      free(lowerName);
+		}
+		return ret;
 }
 
 void formatFrames(Sprite *sprite, cJSON *json)
@@ -58,29 +78,29 @@ void formatFrames(Sprite *sprite, cJSON *json)
     cJSON *d = cJSON_GetObjectItemCaseSensitive(jsonFrame, "d");
     cJSON *n = cJSON_GetObjectItemCaseSensitive(jsonFrame, "n");
 
-      Frame *frame = sprite->frames + j;
-      // frame = (Frame *)malloc(sizeof(Frame));
-      strncpy(frame->id, d->valuestring, sizeof(frame->id));
-      int len = 0;
-      char **split = string_split(c->valuestring, "_", &len);
-      if (len == 4)
-      {
-        frame->left = atof(*split);
-        frame->top = atof(*(split + 1));
-        frame->width = atoi(*(split + 2));
-        frame->height = atoi(*(split + 3));
-        printf("frame %s, %f,%f,%i,%i\n", frame->id, frame->left,frame->top,frame->width,frame->height);
-      }
-      else
-      {
-        printf("parse frames error\n");
-      }
-      for (int x = 0; x < len; x++)
-      {
-        free(split[x]);
-      }
-      free(split);
-      j++;
+    Frame *frame = sprite->frames + j;
+    // frame = (Frame *)malloc(sizeof(Frame));
+    strncpy(frame->id, d->valuestring, sizeof(frame->id));
+    int len = 0;
+    char **split = string_split(c->valuestring, "_", &len);
+    if (len == 4)
+    {
+      frame->left = atof(*split);
+      frame->top = atof(*(split + 1));
+      frame->width = atoi(*(split + 2));
+      frame->height = atoi(*(split + 3));
+      // printf("frame %s, %f,%f,%i,%i\n", frame->id, frame->left, frame->top, frame->width, frame->height);
+    }
+    else
+    {
+      printf("parse frames error\n");
+    }
+    for (int x = 0; x < len; x++)
+    {
+      free(split[x]);
+    }
+    free(split);
+    j++;
   }
 }
 
@@ -95,6 +115,7 @@ Frame *getFrameById(Frame *frames, int framesLen, const char *id)
   }
   return NULL;
 }
+
 void formatActions(Sprite *sprite, cJSON *json)
 {
   cJSON *jsonActions = NULL;
@@ -114,41 +135,42 @@ void formatActions(Sprite *sprite, cJSON *json)
     cJSON *v = cJSON_GetObjectItemCaseSensitive(jsonAction, "v");
     cJSON *framesJson = cJSON_GetObjectItemCaseSensitive(jsonAction, "f");
 
-      Action *action = sprite->actions + i;
-      strncpy(action->name, n->valuestring, sizeof(action->name));
-      strncpy(action->value, v->valuestring, sizeof(action->value));
+    Action *action = sprite->actions + i;
+    strncpy(action->name, n->valuestring, sizeof(action->name));
+    strncpy(action->value, v->valuestring, sizeof(action->value));
 
-      // cJSON *actionFramesJson = NULL;
-      cJSON *actionFrameJson = NULL;
-      int actionFramesLength = cJSON_GetArraySize(framesJson);
-      ActionFrame *actionFrames = (ActionFrame *)malloc(sizeof(ActionFrame) * actionFramesLength);
-      action->actionFrames = actionFrames;
-      action->framesLen = actionFramesLength;
-      int j = 0;
-      cJSON_ArrayForEach(actionFrameJson, framesJson)
+    // cJSON *actionFramesJson = NULL;
+    cJSON *actionFrameJson = NULL;
+    int actionFramesLength = cJSON_GetArraySize(framesJson);
+    ActionFrame *actionFrames = (ActionFrame *)malloc(sizeof(ActionFrame) * actionFramesLength);
+    action->actionFrames = actionFrames;
+    action->framesLen = actionFramesLength;
+    int j = 0;
+    cJSON_ArrayForEach(actionFrameJson, framesJson)
+    {
+      cJSON *flip = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "l");
+      cJSON *duration = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "u");
+      cJSON *offsetX = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "x");
+      cJSON *offsetY = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "y");
+      cJSON *f = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "f");
+
+      int flp = atoi(flip->valuestring);
+      int du = atoi(duration->valuestring);
+      float ox = atof(offsetX->valuestring);
+      float oy = atof(offsetY->valuestring);
+      Frame *frame = getFrameById(sprite->frames, sprite->framesLen, f->valuestring);
+      if (frame == NULL)
       {
-        cJSON *flip = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "l");
-        cJSON *duration = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "u");
-        cJSON *offsetX = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "x");
-        cJSON *offsetY = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "y");
-        cJSON *f = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "f");
-
-        int flp = atoi(flip->valuestring);
-        int du = atoi(duration->valuestring);
-        float ox = atof(offsetX->valuestring);
-        float oy = atof(offsetY->valuestring);
-        Frame* frame = getFrameById(sprite->frames, sprite->framesLen, f->valuestring);
-        if (frame == NULL) {
-          printf("frame null\n");
-        }
-          (actionFrames + j)->flip = flp;
-          (actionFrames + j)->duration = du;
-          (actionFrames + j)->offsetX = ox;
-          (actionFrames + j)->offsetY = oy;
-          (actionFrames + j)->frame = frame;
-          printf("action frame: %i %i %f %f %s \n", flp, du, ox, oy, frame->id);
-          j++;
+        printf("frame null\n");
       }
+      (actionFrames + j)->flip = flp;
+      (actionFrames + j)->duration = du;
+      (actionFrames + j)->offsetX = ox;
+      (actionFrames + j)->offsetY = oy;
+      (actionFrames + j)->frame = frame;
+      // printf("action frame: %i %i %f %f %s \n", flp, du, ox, oy, frame->id);
+      j++;
+    }
     i++;
   }
 }
@@ -176,7 +198,7 @@ void Sprite_init(Sprite *sprite, const char *fileName)
   if (fp == NULL)
   {
     fprintf(stderr, "Unable to open %s\n", fileName);
-    fclose(fp);
+    //fclose(fp);
     free(file_contents);
     exit(1);
   }
@@ -205,18 +227,85 @@ void Sprite_init(Sprite *sprite, const char *fileName)
 
 void Sprite_Destroy(Sprite *sprite)
 {
-  if (sprite->frames != NULL)
+  if (sprite != NULL)
   {
-    free(sprite->frames);
+    if (sprite->m_texture != NULL)
+    {
+      TexturedRectangle_Destroy(sprite->m_texture);
+      sprite->m_texture = NULL;
+    }
+    if (sprite->frames != NULL)
+    {
+      free(sprite->frames);
+    }
+    if (sprite->actions != NULL)
+    {
+      free(sprite->actions);
+    }
+    free(sprite);
   }
-  if (sprite->actions != NULL)
-  {
-    free(sprite->actions);
-  }
-  free(sprite);
 }
 
-void Sprite_NextFrame(Sprite *sprite, void* charactor)
+void Sprite_Render(Sprite* sprite) {
+  if (sprite->m_texture != NULL) {
+    // var region = sprite.config.actions[sprite.actionIndex].f[sprite.frameIndex].r;
+    // 如果资源池里没有该精灵对应的资源，跳过渲染。
+    // if (!resourcePool[sprite.resourceID]) continue;
+    Action *action = sprite->actions + sprite->actionIndex;
+    // 如果没有该精灵当前对应的动作，跳过渲染。
+    if (action == NULL)
+        return;
+    ActionFrame *actionFrame = action->actionFrames + sprite->frameIndex;
+    // 如果没有该精灵当前对应的动作帧，跳过渲染。
+    if (actionFrame == NULL)
+        return;
+    Frame *frame = actionFrame->frame;
+    // 如果没有该精灵当前对应的帧，跳过渲染。
+    if (frame == NULL)
+        return;
+
+    if (sprite->blink)
+    {
+        sprite->blinkState = !sprite->blinkState;
+    }
+    if (!sprite->blink || sprite->blinkState)
+    {
+        TexturedRectangle_SetSrcPosition(sprite->m_texture, frame->left, frame->top);
+        TexturedRectangle_SetSrcDimension(sprite->m_texture, frame->width, frame->height);
+        TexturedRectangle_Render(sprite->m_texture,
+                                 (sprite->x + sprite->sx + actionFrame->offsetX - 0) * SCALE,
+                                 (sprite->y + sprite->sy + actionFrame->offsetY - 0) * SCALE,
+                                 frame->width * SCALE, frame->height * SCALE);
+        //  sprite->toward ? !actionFrame->flip : actionFrame->flip,
+        //  actionFrame->offsetX * SCALE,
+        //  actionFrame->offsetY * SCALE);
+    }
+    TexturedRectangle_Render(sprite->m_texture, sprite->x, sprite->y, sprite->w, sprite->h);
+  }
+}
+
+void Sprite_SetPosition(Sprite* sprite, float x, float y) {
+  sprite->x = x;
+  sprite->y = y;
+}
+void Sprite_SetDimensions(Sprite* sprite, int w, int h) {
+  sprite->w = w;
+  sprite->h = h;
+}
+
+TexturedRectangle* Sprite_GetTexturedRectangle(Sprite* sprite) {
+  return sprite->m_texture;
+}
+
+void Sprite_AddTexturedRectangle(Sprite* sprite, SDL_Renderer* renderer, const char* spritepath, SDL_Rect* srcRect) {
+  if (sprite->m_texture != NULL)
+  {
+      TexturedRectangle_Destroy(sprite->m_texture);
+  }
+  sprite->m_texture = TexturedRectangle_Create(renderer, spritepath, srcRect);
+}
+
+void Sprite_NextFrame(Sprite *sprite, void *charactor)
 {
   sprite->frameCount++;
   if (sprite->actions + sprite->actionIndex == NULL)
@@ -231,6 +320,7 @@ void Sprite_NextFrame(Sprite *sprite, void* charactor)
   sprite->vx && (sprite->x += sprite->vx);
   sprite->vy && (sprite->y += sprite->vy);
   ActionFrame *actionFrame = sprite->actions[sprite->actionIndex].actionFrames + sprite->frameIndex;
+  printf("frame id: %s, index:%i, count: %i\n",sprite->actions[sprite->actionIndex].name, sprite->actionIndex, sprite->frameCount);
   if (actionFrame == NULL)
   {
     sprite->frameIndex = 0;
@@ -239,11 +329,11 @@ void Sprite_NextFrame(Sprite *sprite, void* charactor)
   if (sprite->frameCount > actionFrame->duration - 1)
   {
     sprite->frameCount = 0;
-    Sprite_nextActionFrame(sprite);
+    Sprite_nextActionFrame(sprite, charactor);
   }
 }
 
-void Sprite_nextActionFrame(Sprite *sprite)
+void Sprite_nextActionFrame(Sprite *sprite, void *charactor)
 {
   printf("next frame\n");
   if (!sprite->autoNextFrame)
@@ -259,7 +349,9 @@ void Sprite_nextActionFrame(Sprite *sprite)
     else
     {
       sprite->frameIndex--;
-      // onEnd && onEnd();
+      if (sprite->onEnd != NULL) {
+        sprite->onEnd(charactor);
+      }
     }
   }
 }
@@ -286,4 +378,8 @@ void Sprite_DoAction(Sprite *sprite, void *charactor, const char *actionName)
   {
     sprite->actionCallBack(charactor, actionName);
   }
+}
+
+void Sprite_SetOnEnd(Sprite* sprite, void (*func)(void* charactor)) {
+  sprite->onEnd = func;
 }

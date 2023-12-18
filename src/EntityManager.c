@@ -14,8 +14,8 @@ EntityManager* EntityManager_GetInstance() {
     return instance;
 }
 
-bool EntityManager_CreateEntity(EntityManager* manager, const char* name) {
-    GameEntity* newEntity = GameEntity_Create(name);
+bool EntityManager_CreateEntity(EntityManager* manager, const char* name, void* charactor) {
+    Sprite* newEntity = Sprite_Create();
     if (!newEntity) {
         return false;
     }
@@ -24,6 +24,7 @@ bool EntityManager_CreateEntity(EntityManager* manager, const char* name) {
     strncpy(newNode->name, name, sizeof(newNode->name) - 1);
     newNode->name[sizeof(newNode->name) - 1] = '\0';
     newNode->entity = newEntity;
+    newNode->charactor = charactor;
     newNode->next = manager->entities;
 
     manager->entities = newNode;
@@ -32,30 +33,7 @@ bool EntityManager_CreateEntity(EntityManager* manager, const char* name) {
     return true;
 }
 
-// bool EntityManager_CreateEntity(EntityManager* entityManager, const char* name) {
-//     if (entityManager == NULL || name == NULL) {
-//         return false;
-//     }
-
-//     GameEntity* newEntity = CreateGameEntity(name); //  (GameEntity*)malloc(sizeof(GameEntity));
-//     if (newEntity == NULL) {
-//         return false;
-//     }
-
-//     entityManager->entities = (GameEntity*)realloc(entityManager->entities, (entityManager->entityCount + 1) * sizeof(GameEntity));
-//     if (entityManager->entities == NULL) {
-//         free(newEntity);
-//         return false;
-//     }
-
-//     entityManager->entities[entityManager->entityCount] = *newEntity;
-//     entityManager->entityCount++;
-
-//     free(newEntity);
-//     return true;
-// }
-
-GameEntity* EntityManager_GetEntityRef(EntityManager* manager, const char* name) {
+Sprite* EntityManager_GetEntity(EntityManager* manager, const char* name) {
     EntityNode* node = manager->entities;
     while (node) {
         if (strcmp(node->name, name) == 0) {
@@ -67,19 +45,6 @@ GameEntity* EntityManager_GetEntityRef(EntityManager* manager, const char* name)
 
     return NULL;
 }
-// GameEntity* EntityManager_GetEntityRef(EntityManager* entityManager, const char* name) {
-//     if (entityManager == NULL || name == NULL) {
-//         return NULL;
-//     }
-
-//     for (size_t i = 0; i < entityManager->entityCount; i++) {
-//         if (strcmp(entityManager->entities[i].name, name) == 0) {
-//             return &(entityManager->entities[i]);
-//         }
-//     }
-
-//     return NULL;
-// }
 
 void EntityManager_RemoveEntity(EntityManager* manager, const char* name) {
     EntityNode* prev = NULL;
@@ -93,7 +58,7 @@ void EntityManager_RemoveEntity(EntityManager* manager, const char* name) {
                 manager->entities = node->next;
             }
 
-            GameEntity_Destroy(node->entity);
+            Sprite_Destroy(node->entity);
             free(node);
             manager->entityCount--;
             return;
@@ -103,21 +68,6 @@ void EntityManager_RemoveEntity(EntityManager* manager, const char* name) {
         node = node->next;
     }
 }
-// void EntityManager_RemoveEntity(EntityManager* entityManager, const char* name) {
-//     if (entityManager == NULL || name == NULL) {
-//         return;
-//     }
-//     for (size_t i = 0; i < entityManager->entityCount; i++) {
-//         if (strcmp(entityManager->entities[i].name, name) == 0) {
-//             for (size_t j = i; j < entityManager->entityCount - 1; j++) {
-//                 entityManager->entities[j] = entityManager->entities[j + 1];
-//             }
-//             entityManager->entityCount--;
-//             entityManager->entities = (GameEntity*)realloc(entityManager->entities, entityManager->entityCount * sizeof(GameEntity));
-//             return;
-//         }
-//     }
-// }
 
 void EntityManager_UpdateAll(EntityManager* manager) {
     EntityNode* node = manager->entities;
@@ -127,10 +77,10 @@ void EntityManager_UpdateAll(EntityManager* manager) {
     }
 }
 
-void EntityManager_RenderAll(EntityManager* manager) {
+void EntityManager_Render(EntityManager* manager) {
     EntityNode* node = manager->entities;
     while (node) {
-        GameEntity_Render(node->entity);
+        Sprite_Render(node->entity);
         node = node->next;
     }
 }
@@ -139,13 +89,39 @@ void EntityManager_DeleteAll(EntityManager* manager) {
     while (manager->entities) {
         EntityNode* node = manager->entities;
         manager->entities = node->next;
-        GameEntity_Destroy(node->entity);
+        Sprite_Destroy(node->entity);
         free(node);
     }
 
     manager->entityCount = 0;
 }
 
-void EntityManager_RenderSprite(EntityManager* EntityManager) {
+void EntityManager_Simulate(EntityManager* manager) {
+    EntityNode* node = manager->entities;
+    while (node) {
+        Sprite_NextFrame(node->entity, node->charactor);
+        node = node->next;
+    }
+}
+
+int compSprites (const void* a, const void* b) {
+   return (*(Sprite**)a)->y - (*(Sprite**)b)->y;
+}
+
+void EntityManager_RenderSprite(EntityManager* manager) {
+    Sprite** sprites = (Sprite**)malloc(manager->entityCount * sizeof(Sprite*));
+    EntityNode* node = manager->entities;
+    int i = 0;
+    while (node) {
+        if (node->entity != NULL) {
+            *(sprites + i++) = node->entity; 
+        }
+        node = node->next;
+    }
+    qsort(sprites, i, sizeof(Sprite), compSprites);
     
+    for(int j=0; j < i; j++) {
+        Sprite* sprite = *(sprites + i);
+        Sprite_Render(sprite); 
+    }
 }

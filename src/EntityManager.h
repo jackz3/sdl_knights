@@ -1,12 +1,13 @@
 #ifndef ENTITYMANAGER_H
 #define ENTITYMANAGER_H
 
-#include "GameEntity.h"
 #include <stdbool.h>
+#include "Sprite.h"
 
 typedef struct EntityNode {
     char name[64];
-    GameEntity* entity;
+    Sprite* entity;
+    void* charactor;
     struct EntityNode* next;
 } EntityNode;
 
@@ -17,18 +18,19 @@ typedef struct {
 
 EntityManager* EntityManager_GetInstance();
 
-bool EntityManager_CreateEntity(EntityManager* entityManager, const char* name);
+bool EntityManager_CreateEntity(EntityManager* entityManager, const char* name, void* charactor);
 
-GameEntity* EntityManager_GetEntityRef(EntityManager* entityManager, const char* name);
+Sprite* EntityManager_GetEntity(EntityManager* entityManager, const char* name);
 
 void EntityManager_RemoveEntity(EntityManager* entityManager, const char* name);
 
 void EntityManager_UpdateAll(EntityManager* entityManager);
 
-void EntityManager_RenderAll(EntityManager* entityManager);
+void EntityManager_Render(EntityManager* entityManager);
 
 void EntityManager_DeleteAll(EntityManager* entityManager);
 
 void EntityManager_RenderSprite(EntityManager* EntityManager);
+void EntityManager_Simulate(EntityManager* entityManager);
 
 #endif

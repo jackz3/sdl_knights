@@ -33,16 +33,10 @@
     <ClCompile Include="src\EntityManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameEntity.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Music.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\paddle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Prophet.c">
@@ -64,6 +58,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Effect.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,13 +86,7 @@
     <ClInclude Include="src\EntityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Music.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\paddle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Prophet.h">
@@ -119,5 +110,13 @@
     <ClInclude Include="src\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Effect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\effect1.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

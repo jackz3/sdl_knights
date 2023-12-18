@@ -2,7 +2,7 @@
 #define Keeper_h
 
 #include <SDL2/SDL.h>
-#include "GameEntity.h"
+#include "Sprite.h"
 
 enum state {
 	Keeper_Stand,
@@ -16,7 +16,7 @@ typedef struct {
 	enum state state;
 	char actionName[32];				//精灵当前动作
   int actionLogicCount;
-  GameEntity* entity;
+	Sprite* entity;
 	// var loot = (cfg.loot || 'goldchest,silverchest,jewelrybag,silverbag,goldbag,jewelrychest').split(',');
 } Keeper;
 

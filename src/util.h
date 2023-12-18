@@ -11,5 +11,6 @@
 int rand_int(int min, int max);
 
 char** string_split(const char* str, const char* delim, int* len);
+char* toLowerCase(const char* str);
 
 #endif

@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include "util.h"
 
 int rand_int(int min, int max)
@@ -58,4 +59,19 @@ char **string_split(const char *str, const char* delimiter, int *count)
   *count = i;
 
   return result;
+}
+
+
+char* toLowerCase(const char* str) {
+    int i = 0;
+    int len = strlen(str);
+    char* ret = (char*)malloc(sizeof(char) * (len + 1));
+    if (ret == NULL) {
+      return NULL;
+    }
+    while (str[i] != '\0') {
+        ret[i++] = tolower(str[i]);
+    }
+    ret[len] = '\0';
+    return ret;
 }

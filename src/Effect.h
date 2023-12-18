@@ -1,7 +1,7 @@
 #ifndef effect_h
 #define effect_h
 
-#include "GameEntity.h"
+#include "Sprite.h"
 
 typedef struct 
 {
@@ -23,13 +23,13 @@ typedef struct
 	bool loop;
 	bool blink;
 	// var offsetFunc = cfg.offsetFunc || function(){};
-  GameEntity* entity;
+  Sprite* sprite;
 	int count;
 } Effect;
 
-Effect* Effect_Create(float x, float y);
+Effect* Effect_Create(const char* spriteId, float x, float y, bool toward, const char* actionName, int life);
 void Effect_Destroy(Effect* effect);
 
-void simulatorCallBack(Effect* effect);
+// void simulatorCallBack(Effect* effect);
 
 #endif
