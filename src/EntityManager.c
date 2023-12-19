@@ -77,13 +77,13 @@ void EntityManager_UpdateAll(EntityManager* manager) {
     }
 }
 
-void EntityManager_Render(EntityManager* manager) {
-    EntityNode* node = manager->entities;
-    while (node) {
-        Sprite_Render(node->entity);
-        node = node->next;
-    }
-}
+// void EntityManager_Render(EntityManager* manager) {
+//     EntityNode* node = manager->entities;
+//     while (node) {
+//         Sprite_Render(node->entity);
+//         node = node->next;
+//     }
+// }
 
 void EntityManager_DeleteAll(EntityManager* manager) {
     while (manager->entities) {
@@ -99,8 +99,9 @@ void EntityManager_DeleteAll(EntityManager* manager) {
 void EntityManager_Simulate(EntityManager* manager) {
     EntityNode* node = manager->entities;
     while (node) {
-        Sprite_NextFrame(node->entity, node->charactor);
-        node = node->next;
+        EntityNode* nextNode = node->next;
+        Sprite_NextFrame(node->entity, &node->charactor);
+        node = nextNode;
     }
 }
 
@@ -108,7 +109,7 @@ int compSprites (const void* a, const void* b) {
    return (*(Sprite**)a)->y - (*(Sprite**)b)->y;
 }
 
-void EntityManager_RenderSprite(EntityManager* manager) {
+void EntityManager_Render(EntityManager* manager) {
     Sprite** sprites = (Sprite**)malloc(manager->entityCount * sizeof(Sprite*));
     EntityNode* node = manager->entities;
     int i = 0;
@@ -118,10 +119,11 @@ void EntityManager_RenderSprite(EntityManager* manager) {
         }
         node = node->next;
     }
-    qsort(sprites, i, sizeof(Sprite), compSprites);
+    qsort(sprites, i, sizeof(Sprite*), compSprites);
     
     for(int j=0; j < i; j++) {
-        Sprite* sprite = *(sprites + i);
+        Sprite* sprite = *(sprites + j);
         Sprite_Render(sprite); 
     }
+    free(sprites);
 }

@@ -6,6 +6,9 @@
 #include "cJSON.h"
 #include "util.h"
 #include "config.h"
+#include "sdl_app.h"
+
+extern SDLApp *app;
 
 Sprite *Sprite_Create()
 {
@@ -237,10 +240,12 @@ void Sprite_Destroy(Sprite *sprite)
     if (sprite->frames != NULL)
     {
       free(sprite->frames);
+      sprite->frames = NULL;
     }
     if (sprite->actions != NULL)
     {
       free(sprite->actions);
+      sprite->actions = NULL;
     }
     free(sprite);
   }
@@ -273,14 +278,16 @@ void Sprite_Render(Sprite* sprite) {
         TexturedRectangle_SetSrcPosition(sprite->m_texture, frame->left, frame->top);
         TexturedRectangle_SetSrcDimension(sprite->m_texture, frame->width, frame->height);
         TexturedRectangle_Render(sprite->m_texture,
-                                 (sprite->x + sprite->sx + actionFrame->offsetX - 0) * SCALE,
-                                 (sprite->y + sprite->sy + actionFrame->offsetY - 0) * SCALE,
+                                 (sprite->x + sprite->sx + actionFrame->offsetX - app->cam->x)  * SCALE,
+                                 (sprite->y + sprite->sy + actionFrame->offsetY - app->cam->y) * SCALE,
                                  frame->width * SCALE, frame->height * SCALE);
         //  sprite->toward ? !actionFrame->flip : actionFrame->flip,
         //  actionFrame->offsetX * SCALE,
         //  actionFrame->offsetY * SCALE);
     }
-    TexturedRectangle_Render(sprite->m_texture, sprite->x, sprite->y, sprite->w, sprite->h);
+    else {
+			TexturedRectangle_Render(sprite->m_texture, sprite->x, sprite->y, sprite->w, sprite->h);
+    }
   }
 }
 
@@ -305,7 +312,7 @@ void Sprite_AddTexturedRectangle(Sprite* sprite, SDL_Renderer* renderer, const c
   sprite->m_texture = TexturedRectangle_Create(renderer, spritepath, srcRect);
 }
 
-void Sprite_NextFrame(Sprite *sprite, void *charactor)
+void Sprite_NextFrame(Sprite *sprite, void **charactor)
 {
   sprite->frameCount++;
   if (sprite->actions + sprite->actionIndex == NULL)
@@ -314,13 +321,19 @@ void Sprite_NextFrame(Sprite *sprite, void *charactor)
   if (sprite->simulatorCallBack != NULL)
   {
     sprite->simulatorCallBack(charactor);
+    if (*charactor == NULL) {
+      return;
+    }
   }
   sprite->ax && (sprite->vx += sprite->ax);
   sprite->ay && (sprite->vy += sprite->ay);
   sprite->vx && (sprite->x += sprite->vx);
   sprite->vy && (sprite->y += sprite->vy);
+  //printf("frame id: %s, index:%i, frameIndex: %i, count: %i\n",sprite->actions[sprite->actionIndex].name, sprite->actionIndex, sprite->frameIndex, sprite->frameCount);
+  //if (sprite->frameIndex == 11 && sprite->frameCount == 3 && sprite->actionIndex == 1) {
+  //  printf("stop\n");
+  //}
   ActionFrame *actionFrame = sprite->actions[sprite->actionIndex].actionFrames + sprite->frameIndex;
-  printf("frame id: %s, index:%i, count: %i\n",sprite->actions[sprite->actionIndex].name, sprite->actionIndex, sprite->frameCount);
   if (actionFrame == NULL)
   {
     sprite->frameIndex = 0;
@@ -356,11 +369,11 @@ void Sprite_nextActionFrame(Sprite *sprite, void *charactor)
   }
 }
 
-void Sprite_SetSimulatorCallBack(Sprite *app, void (*func)(void *))
+void Sprite_SetSimulatorCallBack(Sprite *app, void (*func)(void **))
 {
   app->simulatorCallBack = func;
 }
-void Sprite_simulatorCallBack(Sprite *sprite, void *charactor)
+void Sprite_simulatorCallBack(Sprite *sprite, void **charactor)
 {
   if (sprite->simulatorCallBack != NULL)
   {
@@ -380,6 +393,6 @@ void Sprite_DoAction(Sprite *sprite, void *charactor, const char *actionName)
   }
 }
 
-void Sprite_SetOnEnd(Sprite* sprite, void (*func)(void* charactor)) {
+void Sprite_SetOnEnd(Sprite* sprite, void (*func)(void** charactor)) {
   sprite->onEnd = func;
 }

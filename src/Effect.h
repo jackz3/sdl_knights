@@ -27,7 +27,7 @@ typedef struct
 	int count;
 } Effect;
 
-Effect* Effect_Create(const char* spriteId, float x, float y, bool toward, const char* actionName, int life);
+Effect* Effect_Create(const char* spriteId, float x, float y, const char* actionName, int life);
 void Effect_Destroy(Effect* effect);
 
 // void simulatorCallBack(Effect* effect);

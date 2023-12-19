@@ -150,6 +150,7 @@
     <ClCompile Include="src\DynamicText.c" />
     <ClCompile Include="src\Effect.c" />
     <ClCompile Include="src\EntityManager.c" />
+    <ClCompile Include="src\Keeper.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Music.c" />
     <ClCompile Include="src\Prophet.c" />
@@ -169,6 +170,7 @@
     <ClInclude Include="src\DynamicText.h" />
     <ClInclude Include="src\Effect.h" />
     <ClInclude Include="src\EntityManager.h" />
+    <ClInclude Include="src\Keeper.h" />
     <ClInclude Include="src\Music.h" />
     <ClInclude Include="src\Prophet.h" />
     <ClInclude Include="src\ResourceManager.h" />

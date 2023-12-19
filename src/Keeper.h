@@ -4,24 +4,22 @@
 #include <SDL2/SDL.h>
 #include "Sprite.h"
 
-enum state {
+enum Keeper_State {
 	Keeper_Stand,
-	Prophet_prophet
+	Keeper_Upacking
 };
 
 typedef struct {
-  char spriteId[16];
-	float toward;		//精灵的方向
-	// char state[16];				//有限状态机,表示角色当前的状态
-	enum state state;
+  char name[16];
+	enum Keeper_State state;
 	char actionName[32];				//精灵当前动作
   int actionLogicCount;
-	Sprite* entity;
+	Sprite* sprite;
 	// var loot = (cfg.loot || 'goldchest,silverchest,jewelrybag,silverbag,goldbag,jewelrychest').split(',');
 } Keeper;
 
-Keeper* Keeper_Create(float x, float y);
+Keeper* Keeper_Create(float x, float y, const char* actionName, const char* loot);
 void Keeper_Destroy(Keeper* keeper);
-void simulatorCallBack(Keeper* keeper);
+void Keeper_Unpack(Keeper* keeper);
 
 #endif

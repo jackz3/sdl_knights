@@ -19,6 +19,7 @@ SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, in
     app->renderCallback = NULL;
     app->timers = NULL;
     app->timerCount = 0;
+    app->cam= Camera_Create();
 
     if (SDL_Init(subsystemFlags) < 0)
     {

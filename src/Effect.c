@@ -8,21 +8,22 @@ void Effect_ActionCallback(void* charactor, const char* actionName) {
 
 }
 
-static void Effect_Simulator(void* charactor) {
-  Effect* effect = (Effect*)charactor;
+static void Effect_Simulator(void** charactor) {
+  Effect* effect = (Effect*)*charactor;
   effect->life--;
   if (effect->life < 1){
     Effect_Destroy(effect);
+    *charactor = NULL;
   }
   // offsetFunc(sprite, count++, instance);  
 }
 
-Effect* Effect_Create(const char* spriteId, float x, float y, bool toward, const char* actionName, int life) {
+Effect* Effect_Create(const char* spriteId, float x, float y, const char* actionName, int life) {
   Effect* effect = (Effect*)malloc(sizeof(Effect));
   strcpy(effect->name, spriteId);
   strcpy(effect->spriteID, spriteId);
   strcpy(effect->actionName, actionName);
-  effect->toward = toward;
+  effect->toward = false;
   effect->life = life;
   effect->loop = true;
 
@@ -42,8 +43,8 @@ Effect* Effect_Create(const char* spriteId, float x, float y, bool toward, const
 }
 
 void Effect_Destroy(Effect* effect) {
-  if (effect->sprite != NULL) {
-    Sprite_Destroy(effect->sprite);
-  }
+  EntityManager_RemoveEntity(EntityManager_GetInstance(), effect->name);
   free(effect);
+  printf("destroy effect\n");
+  // effect = NULL;
 }

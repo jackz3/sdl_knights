@@ -15,6 +15,7 @@
 #include "Background.h"
 #include "camera.h"
 #include "Prophet.h"
+#include "Keeper.h"
 
 // render manager
 // res loader
@@ -26,8 +27,6 @@ BG* farBg;
 BG* midBg;
 BG* nearBg;
 Prophet* prophet;
-
-Camera* cam;
 
 typedef struct
 {
@@ -77,11 +76,11 @@ void HandleEvents()
     {
     }
     if (state[SDL_SCANCODE_LEFT]) {
-        cam->x--;
+        app->cam->x--;
     }
     if (state[SDL_SCANCODE_RIGHT]) {
-        cam->x += 2;
-        printf("left %f \n", cam->x);
+        app->cam->x += 2;
+        printf("left %f \n", app->cam->x);
     }
 }
 
@@ -97,19 +96,19 @@ void HandleUpdate(Uint32 delta)
 void HandleRendering()
 {
     ResourceManager *rm = ResourceManager_GetInstance();
-    Camera_Adjust(cam);
-    float sx = cam->x * 0.7;
+    Camera_Adjust(app->cam);
+    float sx = app->cam->x * 0.7;
     TexturedRectangle_SetSrcPosition(farBg->m_texture, sx, 0);
     BG_Render(farBg);
-    Camera_Adjust(cam);
-    TexturedRectangle_SetSrcPosition(midBg->m_texture, cam->x, 0);
+    Camera_Adjust(app->cam);
+    TexturedRectangle_SetSrcPosition(midBg->m_texture, app->cam->x, 0);
     BG_Render(midBg);
     printf("rendering\n");
     // Sprite_Render(prophet->sprite);
     EntityManager_Render(EntityManager_GetInstance());
 
-    Camera_Adjust(cam);
-    TexturedRectangle_SetSrcPosition(nearBg->m_texture, cam->x, 0);
+    Camera_Adjust(app->cam);
+    TexturedRectangle_SetSrcPosition(nearBg->m_texture, app->cam->x, 0);
     BG_Render(nearBg);
 }
 
@@ -127,8 +126,7 @@ int main(int argc, char *argv[])
     app = SDLApp_Create(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER, title, 80, 80, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
     SDLApp_SetMaxFrameRate(app, 16);
 
-    cam = Camera_Create();
-    Camera_SetMaxWidth(cam, 800);
+    Camera_SetMaxWidth(app->cam, 800);
     ResourceManager *rm = ResourceManager_GetInstance();
     ResourceManager_LoadFont(rm, "peaberry", "./assets/fonts/PeaberryMono.ttf");
 
@@ -144,6 +142,9 @@ int main(int argc, char *argv[])
     ResourceManager_LoadMusic(rm, "bg", "./assets/sounds/bg.mp3");
     // Music_Play(ResourceManager_GetMusic(rm, "bg"), -1);
 
+    // Keeper_Create(464, 164, "cask", "jewelrybag");
+    // Keeper_Create(480, 196, "cask", "silverchest");
+    Keeper_Create(704, 155, "fence1", "goldchest");
     prophet = Prophet_Create(280, 165);
     printf("created\n");
 
@@ -165,7 +166,6 @@ int main(int argc, char *argv[])
     // Clean up our application
     SDLApp_Destroy(app);
     ResourceManager_Destroy(rm);
-    Prophet_Destroy(prophet);
     // EntityManager_DeleteAll(entityMgr);
     return 0;
 }

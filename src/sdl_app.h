@@ -2,6 +2,7 @@
 #define SDLAPP_H
 
 #include <SDL2/SDL.h>
+#include "camera.h"
 
 typedef struct {
     SDL_Window* window;
@@ -17,6 +18,7 @@ typedef struct {
     void (*renderCallback)(void);
     SDL_TimerID* timers;
     int timerCount;
+    Camera* cam;
 } SDLApp;
 
 SDLApp* SDLApp_Create(Uint32 subsystemFlags, const char* title, int x, int y, int w, int h);
