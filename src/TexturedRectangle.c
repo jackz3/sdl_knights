@@ -69,6 +69,13 @@ void TexturedRectangle_Render(TexturedRectangle* rectangle, float x, float y, in
     SDL_RenderCopy(rectangle->m_renderer, rectangle->texture, rectangle->srcRect, &rect);
 }
 
+void TexturedRectangle_RenderEx(TexturedRectangle* rectangle, float x, float y, int w, int h, SDL_RendererFlip flip) {
+    SDL_Rect rect = {
+        x, y, w, h
+    };
+    SDL_RenderCopyEx(rectangle->m_renderer, rectangle->texture, rectangle->srcRect, &rect, 0, NULL, flip);
+}
+
 void TexturedRectangle_SetSrcPosition(TexturedRectangle* rectangle, float x, float y) {
     rectangle->srcRect->x = x;
     rectangle->srcRect->y = y;

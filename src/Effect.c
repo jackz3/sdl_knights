@@ -4,7 +4,7 @@
 
 extern SDLApp* app;
 
-void Effect_ActionCallback(void* charactor, const char* actionName) {
+void Effect_ActionCallback(void* charactor, const char* actionName, const char* actionParam) {
 
 }
 
@@ -23,9 +23,7 @@ Effect* Effect_Create(const char* spriteId, float x, float y, const char* action
   strcpy(effect->name, spriteId);
   strcpy(effect->spriteID, spriteId);
   strcpy(effect->actionName, actionName);
-  effect->toward = false;
   effect->life = life;
-  effect->loop = true;
 
   EntityManager_CreateEntity(EntityManager_GetInstance(), effect->spriteID, effect);
   Sprite* sprite = EntityManager_GetEntity(EntityManager_GetInstance(), effect->spriteID);
@@ -37,6 +35,9 @@ Effect* Effect_Create(const char* spriteId, float x, float y, const char* action
   Sprite_SetActionCallBack(sprite, Effect_ActionCallback);
   Sprite_SetSimulatorCallBack(sprite, Effect_Simulator);
   sprite->actionIndex = Sprite_GetActionId(sprite, effect->actionName);
+  sprite->toward = false;
+  sprite->loop = true;
+  
   effect->sprite = sprite;
   printf("create effect\n"); 
   return effect;

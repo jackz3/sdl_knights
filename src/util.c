@@ -75,3 +75,25 @@ char* toLowerCase(const char* str) {
     ret[len] = '\0';
     return ret;
 }
+
+LinkedList* LinkedList_Create() {
+  LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
+  list->items = NULL;
+  list->itemCount = 0;
+  return list;
+}
+void LinkedList_Destroy(LinkedList* list) {
+    while (list->items) {
+        ItemNode* node = list->items;
+        list->items = node->next;
+        free(node);
+    }
+    list->itemCount = 0;
+}
+void LinkedList_Add(LinkedList* list, void* item) {
+    ItemNode* node = (ItemNode*)malloc(sizeof(ItemNode));
+    node->item = item;
+    node->next = list->items;
+    list->items = node;
+    list->itemCount++;
+}

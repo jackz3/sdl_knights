@@ -13,4 +13,19 @@ int rand_int(int min, int max);
 char** string_split(const char* str, const char* delim, int* len);
 char* toLowerCase(const char* str);
 
+typedef struct ItemNode {
+  void* item;
+  struct ItemNode* next;
+} ItemNode;
+
+typedef struct {
+  ItemNode* items;
+  size_t itemCount;
+} LinkedList;
+
+LinkedList* LinkedList_Create();
+void LinkedList_Destroy(LinkedList* list);
+void LinkedList_Add(LinkedList* list, void* item);
+
+
 #endif

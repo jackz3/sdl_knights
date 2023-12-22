@@ -14,8 +14,8 @@
 #include "config.h"
 #include "Background.h"
 #include "camera.h"
-#include "Prophet.h"
-#include "Keeper.h"
+#include "StageManager.h"
+#include "GameState.h"
 
 // render manager
 // res loader
@@ -26,15 +26,6 @@ SDLApp *app;
 BG* farBg;
 BG* midBg;
 BG* nearBg;
-Prophet* prophet;
-
-typedef struct
-{
-    int player1Score;
-    int player2Score;
-    int servingPlayer;
-    int winningPlayer;
-} GameState;
 
 GameState *gameState;
 
@@ -59,8 +50,10 @@ void HandleEvents()
                 break;
             }
         }
+        Stage_HandleInput(&event, NULL);
     }
     const Uint8 *state = SDL_GetKeyboardState(NULL);
+		Stage_HandleInput(&event, state);
     if (state[SDL_SCANCODE_UP])
     {
     }
@@ -69,12 +62,6 @@ void HandleEvents()
     }
     else{
     } 
-    if (state[SDL_SCANCODE_W])
-    {
-    }
-    else if (state[SDL_SCANCODE_S])
-    {
-    }
     if (state[SDL_SCANCODE_LEFT]) {
         app->cam->x--;
     }
@@ -88,14 +75,12 @@ void HandleEvents()
 void HandleUpdate(Uint32 delta)
 {
     printf("updating\n");
-    // Sprite_NextFrame(prophet->sprite, prophet);
-    EntityManager_Simulate(EntityManager_GetInstance()); 
+    Stage_Update(delta);
 }
 
 // Handle the rendering of the game entities
 void HandleRendering()
 {
-    ResourceManager *rm = ResourceManager_GetInstance();
     Camera_Adjust(app->cam);
     float sx = app->cam->x * 0.7;
     TexturedRectangle_SetSrcPosition(farBg->m_texture, sx, 0);
@@ -104,8 +89,7 @@ void HandleRendering()
     TexturedRectangle_SetSrcPosition(midBg->m_texture, app->cam->x, 0);
     BG_Render(midBg);
     printf("rendering\n");
-    // Sprite_Render(prophet->sprite);
-    EntityManager_Render(EntityManager_GetInstance());
+    Stage_Render();
 
     Camera_Adjust(app->cam);
     TexturedRectangle_SetSrcPosition(nearBg->m_texture, app->cam->x, 0);
@@ -122,7 +106,7 @@ Uint32 my_callbackfunc(Uint32 interval, void *param)
 int main(int argc, char *argv[])
 {
     // Setup the SDLApp
-    const char *title = "SDL2_Pong";
+    const char *title = "SDL2 Knights_Of_Round";
     app = SDLApp_Create(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER, title, 80, 80, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
     SDLApp_SetMaxFrameRate(app, 16);
 
@@ -141,19 +125,10 @@ int main(int argc, char *argv[])
     ResourceManager_LoadSound(rm, "bonus", "./assets/sounds/bonus.mp3");
     ResourceManager_LoadMusic(rm, "bg", "./assets/sounds/bg.mp3");
     // Music_Play(ResourceManager_GetMusic(rm, "bg"), -1);
+    GameState_Init();
+    StageManager_Init();
+    // playerPool.push(lancelot = new Lancelot({x: -3, y: 204, health:lancelotHealth || 80}));
 
-    // Keeper_Create(464, 164, "cask", "jewelrybag");
-    // Keeper_Create(480, 196, "cask", "silverchest");
-    Keeper_Create(704, 155, "fence1", "goldchest");
-    prophet = Prophet_Create(280, 165);
-    printf("created\n");
-
-    // Setup the Game State
-    gameState = (GameState *)malloc(sizeof(GameState));
-    gameState->player1Score = 0;
-    gameState->player2Score = 0;
-    gameState->servingPlayer = 1;
-    gameState->winningPlayer = 0;
 
     // Set callback functions
     SDLApp_SetEventCallback(app, HandleEvents);
@@ -166,6 +141,6 @@ int main(int argc, char *argv[])
     // Clean up our application
     SDLApp_Destroy(app);
     ResourceManager_Destroy(rm);
-    // EntityManager_DeleteAll(entityMgr);
+	  EntityManager_DeleteAll(EntityManager_GetInstance());
     return 0;
 }

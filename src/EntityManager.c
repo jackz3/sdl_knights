@@ -77,14 +77,6 @@ void EntityManager_UpdateAll(EntityManager* manager) {
     }
 }
 
-// void EntityManager_Render(EntityManager* manager) {
-//     EntityNode* node = manager->entities;
-//     while (node) {
-//         Sprite_Render(node->entity);
-//         node = node->next;
-//     }
-// }
-
 void EntityManager_DeleteAll(EntityManager* manager) {
     while (manager->entities) {
         EntityNode* node = manager->entities;

@@ -24,6 +24,7 @@ int TexturedRectangle_GetGreenColorKey(TexturedRectangle* rectangle);
 int TexturedRectangle_GetBlueColorKey(TexturedRectangle* rectangle);
 void TexturedRectangle_Update(TexturedRectangle* rectangle);
 void TexturedRectangle_Render(TexturedRectangle* rectangle, float x, float y, int w, int h);
+void TexturedRectangle_RenderEx(TexturedRectangle* rectangle, float x, float y, int w, int h, SDL_RendererFlip flip);
 void TexturedRectangle_SetSrcPosition(TexturedRectangle* rectangle, float x, float y);
 void TexturedRectangle_SetSrcDimension(TexturedRectangle* rectangle, int w, int h);
 

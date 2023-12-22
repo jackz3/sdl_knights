@@ -252,6 +252,9 @@ void Sprite_Destroy(Sprite *sprite)
 }
 
 void Sprite_Render(Sprite* sprite) {
+  //if (sprite->actionsLen > 20) {
+  //  printf("sprite rendering %i\n", sprite->actionsLen);
+  //}
   if (sprite->m_texture != NULL) {
     // var region = sprite.config.actions[sprite.actionIndex].f[sprite.frameIndex].r;
     // 如果资源池里没有该精灵对应的资源，跳过渲染。
@@ -277,11 +280,20 @@ void Sprite_Render(Sprite* sprite) {
     {
         TexturedRectangle_SetSrcPosition(sprite->m_texture, frame->left, frame->top);
         TexturedRectangle_SetSrcDimension(sprite->m_texture, frame->width, frame->height);
+        bool flip = sprite->toward ? !actionFrame->flip : actionFrame->flip;
+        float tx = (sprite->x + sprite->sx + actionFrame->offsetX - app->cam->x);
+        if (!flip) {
         TexturedRectangle_Render(sprite->m_texture,
-                                 (sprite->x + sprite->sx + actionFrame->offsetX - app->cam->x)  * SCALE,
+                                 tx * SCALE,
                                  (sprite->y + sprite->sy + actionFrame->offsetY - app->cam->y) * SCALE,
                                  frame->width * SCALE, frame->height * SCALE);
-        //  sprite->toward ? !actionFrame->flip : actionFrame->flip,
+        } else {
+        TexturedRectangle_RenderEx(sprite->m_texture,
+                                 (tx)  * SCALE,
+                                 (sprite->y + sprite->sy + actionFrame->offsetY - app->cam->y) * SCALE,
+                                 frame->width * SCALE, frame->height * SCALE, SDL_FLIP_HORIZONTAL);
+
+        }
         //  actionFrame->offsetX * SCALE,
         //  actionFrame->offsetY * SCALE);
     }
@@ -348,7 +360,6 @@ void Sprite_NextFrame(Sprite *sprite, void **charactor)
 
 void Sprite_nextActionFrame(Sprite *sprite, void *charactor)
 {
-  printf("next frame\n");
   if (!sprite->autoNextFrame)
     return;
   sprite->frameIndex++;
@@ -381,15 +392,15 @@ void Sprite_simulatorCallBack(Sprite *sprite, void **charactor)
   }
 }
 
-void Sprite_SetActionCallBack(Sprite *sprite, void (*func)(void *charactor, const char *actionName))
+void Sprite_SetActionCallBack(Sprite *sprite, void (*func)(void *charactor, const char *actionName, const char* actionParam))
 {
   sprite->actionCallBack = func;
 }
-void Sprite_DoAction(Sprite *sprite, void *charactor, const char *actionName)
+void Sprite_DoAction(Sprite *sprite, void *charactor, const char *actionName, const char* actionParam)
 {
   if (sprite->actionCallBack != NULL)
   {
-    sprite->actionCallBack(charactor, actionName);
+    sprite->actionCallBack(charactor, actionName, actionParam);
   }
 }
 

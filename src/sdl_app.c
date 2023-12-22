@@ -20,6 +20,9 @@ SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, in
     app->timers = NULL;
     app->timerCount = 0;
     app->cam= Camera_Create();
+    // app->keyState.a = 0;
+    memset(&app->keyState, 0, sizeof(KeyState));
+
 
     if (SDL_Init(subsystemFlags) < 0)
     {

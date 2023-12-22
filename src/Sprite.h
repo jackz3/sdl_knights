@@ -57,7 +57,7 @@ typedef struct Sprite {
 	bool flashState; 		//当前闪烁状态
 	bool autoNextFrame;		//是否自动步进
 	void (*simulatorCallBack)(void** charactor);
-	void (*actionCallBack)(void* charactor, const char* actionName);
+	void (*actionCallBack)(void* charactor, const char* actionName, const char* actionParam);
 	void (*onEnd)(void** charactor);
 } Sprite;
 
@@ -77,8 +77,8 @@ void Sprite_nextActionFrame(Sprite* sprite, void* charactor);
 
 void Sprite_SetSimulatorCallBack(Sprite* app, void (*func)(void**));
 void Sprite_simulatorCallBack(Sprite* sprite, void** charactor);
-void Sprite_SetActionCallBack(Sprite* sprite, void (*func)(void* charactor, const char* actionName));
-void Sprite_DoAction(Sprite* sprite, void* charactor, const char* actionName);
+void Sprite_SetActionCallBack(Sprite* sprite, void (*func)(void* charactor, const char* actionName, const char* actionParam));
+void Sprite_DoAction(Sprite* sprite, void* charactor, const char* actionName, const char* actionParam);
 void Sprite_SetOnEnd(Sprite* sprite, void (*func)(void** charactor));
 
 #endif

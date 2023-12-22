@@ -14,14 +14,11 @@ static void onEnd(void** charactor) {
   Prophet_Destroy(prophet); 
   *charactor = NULL;
 } 
-void Prophet_ActionCallback(void* charactor, const char* actionName) {
+void Prophet_ActionCallback(void* charactor, const char* actionName, const char* actionParam) {
   Prophet* prophet = (Prophet*)charactor;
   if (strcmp(actionName, "prophet") == 0) {
-    // do something
-    // sprite->    
     prophet->state = Prophet_prophet;
-			// sprite.actionIndex = actionEnum['prophet'];
-    prophet->sprite->actionIndex = 0;
+    prophet->sprite->actionIndex = Sprite_GetActionId(prophet->sprite, "prophet");
     prophet->sprite->frameIndex = 0;
     prophet->sprite->loop = false;
     Sprite_SetOnEnd(prophet->sprite, onEnd);
@@ -31,13 +28,12 @@ void Prophet_ActionCallback(void* charactor, const char* actionName) {
 void Prophet_Simulator(void** charactor) {
   Prophet* prophet = (Prophet*)*charactor;
   if (prophet->state == Prophet_Stand){
-				// doAction('prophet');
-      Sprite_DoAction(prophet->sprite, *charactor, "prophet");
+      Sprite_DoAction(prophet->sprite, *charactor, "prophet", NULL);
   } else if (prophet->state == Prophet_prophet){
     if (prophet->sprite->frameIndex == 11 && prophet->sprite->frameCount == 5){
       printf("creating effect index: %i\n", prophet->sprite->frameIndex);
       Effect* effect = Effect_Create("effect1", prophet->sprite->x, prophet->sprite->y, "smoke", 36);
-      effect->toward = prophet->sprite->toward;
+      effect->sprite->toward = prophet->sprite->toward;
 					// soundManager.play('smoke');
     } 
     if (prophet->z != 0 || prophet->vz != 0){
@@ -52,10 +48,10 @@ void Prophet_Simulator(void** charactor) {
       }
       prophet->sprite->sy = prophet->z;
       Effect* effect = Effect_Create("effect1", prophet->sprite->x + rand_int(-20, 20), prophet->sprite->y, "dust", 15);
-      effect->toward = prophet->sprite->toward;
-      effect->vx = rand_int(-2, 2);
-      effect->vy = rand_int(-1, 1);
-      effect->loop = true;
+      effect->sprite->toward = prophet->sprite->toward;
+      effect->sprite->vx = rand_int(-2, 2);
+      effect->sprite->vy = rand_int(-1, 1);
+      effect->sprite->loop = true;
 						// 	x: sprite.x + Math.random() * 40 - 20,
 						// 	vx: Math.random() * 2 - 1,
 						// 	vy: (Math.random() * 2 - 1) / 2.5,
@@ -76,15 +72,14 @@ Prophet* Prophet_Create(float x, float y) {
   prophet->state = Prophet_Stand;
 
   EntityManager_CreateEntity(EntityManager_GetInstance(), prophet->name, prophet);
-  Sprite* entity = EntityManager_GetEntity(EntityManager_GetInstance(), prophet->name);
+  Sprite* sprite = EntityManager_GetEntity(EntityManager_GetInstance(), prophet->name);
   SDL_Rect* rect = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-  Sprite_AddTexturedRectangle(entity, app->renderer, "./assets/images/prophet.png", rect);
-  Sprite_SetPosition(entity, x, y);
-  // GameEntity_SetDimensions(entity, w, h);
-  Sprite_init(entity, "./assets/prophet.json");
-  Sprite_SetActionCallBack(entity, Prophet_ActionCallback);
-  Sprite_SetSimulatorCallBack(entity, Prophet_Simulator);
-  prophet->sprite = entity;
+  Sprite_AddTexturedRectangle(sprite, app->renderer, "./assets/images/prophet.png", rect);
+  Sprite_SetPosition(sprite, x, y);
+  Sprite_init(sprite, "./assets/prophet.json");
+  Sprite_SetActionCallBack(sprite, Prophet_ActionCallback);
+  Sprite_SetSimulatorCallBack(sprite, Prophet_Simulator);
+  prophet->sprite = sprite;
   printf("create prophet\n"); 
   return prophet;
 }

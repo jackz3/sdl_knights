@@ -150,7 +150,9 @@
     <ClCompile Include="src\DynamicText.c" />
     <ClCompile Include="src\Effect.c" />
     <ClCompile Include="src\EntityManager.c" />
+    <ClCompile Include="src\GameState.c" />
     <ClCompile Include="src\Keeper.c" />
+    <ClCompile Include="src\Lancelot.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\Music.c" />
     <ClCompile Include="src\Prophet.c" />
@@ -158,6 +160,8 @@
     <ClCompile Include="src\sdl_app.c" />
     <ClCompile Include="src\Sound.c" />
     <ClCompile Include="src\Sprite.c" />
+    <ClCompile Include="src\stage1.c" />
+    <ClCompile Include="src\StageManager.c" />
     <ClCompile Include="src\TexturedRectangle.c" />
     <ClCompile Include="src\util.c" />
   </ItemGroup>
@@ -170,13 +174,16 @@
     <ClInclude Include="src\DynamicText.h" />
     <ClInclude Include="src\Effect.h" />
     <ClInclude Include="src\EntityManager.h" />
+    <ClInclude Include="src\GameState.h" />
     <ClInclude Include="src\Keeper.h" />
+    <ClInclude Include="src\Lancelot.h" />
     <ClInclude Include="src\Music.h" />
     <ClInclude Include="src\Prophet.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\sdl_app.h" />
     <ClInclude Include="src\Sound.h" />
     <ClInclude Include="src\Sprite.h" />
+    <ClInclude Include="src\StageManager.h" />
     <ClInclude Include="src\TexturedRectangle.h" />
     <ClInclude Include="src\util.h" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-LIBS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+LIBS=-lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 CFLAGS=-Os -Wall -DPLATFORM_WEB
 EMCC=docker run --rm -v $(shell pwd):/src -u $(shell id -u):$(shell id -g) emscripten/emsdk emcc
 CC=gcc

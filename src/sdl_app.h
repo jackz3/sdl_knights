@@ -5,6 +5,15 @@
 #include "camera.h"
 
 typedef struct {
+    int up;
+    int down;
+    int left;
+    int right;
+    int a;
+    int b;
+} KeyState;
+
+typedef struct {
     SDL_Window* window;
     SDL_Renderer* renderer;
     int maxFrameRate;
@@ -19,6 +28,7 @@ typedef struct {
     SDL_TimerID* timers;
     int timerCount;
     Camera* cam;
+    KeyState keyState;
 } SDLApp;
 
 SDLApp* SDLApp_Create(Uint32 subsystemFlags, const char* title, int x, int y, int w, int h);
