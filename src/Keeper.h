@@ -18,7 +18,7 @@ typedef struct {
 	// var loot = (cfg.loot || 'goldchest,silverchest,jewelrybag,silverbag,goldbag,jewelrychest').split(',');
 } Keeper;
 
-Keeper* Keeper_Create(float x, float y, const char* actionName, const char* loot);
+Keeper* Keeper_Create(float x, float y, const char* actionName, const char* loot, const char* name);
 void Keeper_Destroy(Keeper* keeper);
 void Keeper_Unpack(Keeper* keeper);
 

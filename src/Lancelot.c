@@ -423,14 +423,13 @@ void simulator(void **charactor)
   LinkedList *keeperPool = GameState_GetKeeperPool();
   ItemNode* node = keeperPool->items;
   while(node) {
-    Keeper* keeper = (Keeper*)node->item;
-    // if (spriteManager.collisionDetector(lancelot->sprite, keeper->sprite)) {
-				// if (state != 'powerslash' || keeper.sprite.actions[keeper.sprite.actionIndex].name == 'fence1'){
-        if (state != Lancelot_Powerslash || strcmp(keeper->sprite->actions[keeper->sprite->actionIndex].name, "fence1") == 0) {
-					// keeper.unpack(character);
+    char* name = (char*)node->item;
+    Keeper* keeper = (Keeper*)EntityManager_GetCharactor(EntityManager_GetInstance(), name);
+    if (keeper != NULL && collisionDetector(lancelot->sprite, (keeper)->sprite, 999, false, NULL)) {
+        if (state != Lancelot_Powerslash || strcmp((keeper)->sprite->actions[(keeper)->sprite->actionIndex].name, "fence1") == 0) {
           Keeper_Unpack(keeper);
 				}
-			// }
+			}
     node = node->next;
   }
 }

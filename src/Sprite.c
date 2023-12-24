@@ -119,6 +119,54 @@ Frame *getFrameById(Frame *frames, int framesLen, const char *id)
   return NULL;
 }
 
+int (*parseAttackRegion(cJSON *r, ActionFrame *actionFrames, int j, const char* keyName, int* count))[4]
+{
+  cJSON *bJson = cJSON_GetObjectItemCaseSensitive(r, keyName);
+  if (bJson == NULL)
+  {
+    // (actionFrames + j)->r->b = NULL;
+    // (actionFrames + j)->r->bCount = 0;
+    return NULL;
+    *count = 0;
+  }
+  else
+  {
+    cJSON *bItemJson = NULL;
+    int bCount = cJSON_GetArraySize(bJson);
+    *count = bCount;
+    if (bCount == 0) {
+      return NULL;
+    }
+    (actionFrames + j)->r->bCount = bCount;
+    int(*b)[4] = (int(*)[4])malloc(sizeof(int(*)[4]) * bCount);
+    int x = 0;
+    cJSON_ArrayForEach(bItemJson, bJson)
+    {
+      if (bItemJson == NULL)
+      {
+        b = NULL;
+      }
+      else
+      {
+        int len = cJSON_GetArraySize(bItemJson);
+        if (len != 4)
+        {
+          printf("attack region is not 4\n");
+        }
+        else
+        {
+          for (int k = 0; k < len; k++)
+          {
+            b[x][k] = cJSON_GetArrayItem(bItemJson, k)->valueint;
+          }
+        }
+      }
+      x++;
+    }
+    // (actionFrames + j)->r->b = b;
+    return b;
+  }
+}
 void formatActions(Sprite *sprite, cJSON *json)
 {
   cJSON *jsonActions = NULL;
@@ -156,7 +204,8 @@ void formatActions(Sprite *sprite, cJSON *json)
       cJSON *offsetX = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "x");
       cJSON *offsetY = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "y");
       cJSON *f = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "f");
-
+      // cJSON *d = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "d");
+      cJSON *r = cJSON_GetObjectItemCaseSensitive(actionFrameJson, "r");
       int flp = atoi(flip->valuestring);
       int du = atoi(duration->valuestring);
       float ox = atof(offsetX->valuestring);
@@ -172,11 +221,22 @@ void formatActions(Sprite *sprite, cJSON *json)
       (actionFrames + j)->offsetY = oy;
       (actionFrames + j)->frame = frame;
       // printf("action frame: %i %i %f %f %s \n", flp, du, ox, oy, frame->id);
+      if (r == NULL) {
+        (actionFrames + j)->r = NULL;
+      } else {
+        (actionFrames + j)->r = (AttackRegion*)malloc(sizeof(AttackRegion));
+        int count = 0;
+        (actionFrames + j)->r->b = parseAttackRegion(r, actionFrames, j, "b", &count);
+        (actionFrames + j)->r->bCount = count;
+        (actionFrames + j)->r->a = parseAttackRegion(r, actionFrames, j, "a", &count);
+        (actionFrames + j)->r->aCount = count;
+      }
       j++;
     }
     i++;
   }
 }
+
 
 void Sprite_init(Sprite *sprite, const char *fileName)
 {

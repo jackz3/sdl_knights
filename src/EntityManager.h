@@ -21,6 +21,7 @@ EntityManager* EntityManager_GetInstance();
 bool EntityManager_CreateEntity(EntityManager* entityManager, const char* name, void* charactor);
 
 Sprite* EntityManager_GetEntity(EntityManager* entityManager, const char* name);
+void* EntityManager_GetCharactor(EntityManager* entityManager, const char* name);
 
 void EntityManager_RemoveEntity(EntityManager* entityManager, const char* name);
 
@@ -32,5 +33,7 @@ void EntityManager_DeleteAll(EntityManager* entityManager);
 
 void EntityManager_RenderSprite(EntityManager* EntityManager);
 void EntityManager_Simulate(EntityManager* entityManager);
+
+bool collisionDetector(Sprite* s1, Sprite* s2, int attackRange, bool bodyMode, int* rangeFix);
 
 #endif

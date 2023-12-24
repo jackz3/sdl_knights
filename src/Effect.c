@@ -39,13 +39,12 @@ Effect* Effect_Create(const char* spriteId, float x, float y, const char* action
   sprite->loop = true;
   
   effect->sprite = sprite;
-  printf("create effect\n"); 
+  printf("created effect: %s\n", effect->name); 
   return effect;
 }
 
 void Effect_Destroy(Effect* effect) {
+  printf("destroying effect %s\n", effect->name);
   EntityManager_RemoveEntity(EntityManager_GetInstance(), effect->name);
   free(effect);
-  printf("destroy effect\n");
-  // effect = NULL;
 }

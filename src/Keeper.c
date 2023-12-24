@@ -23,27 +23,27 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       keeper->actionLogicCount = 25;
       keeper->sprite->blink = true;
       // soundManager.play('cask');
-      Effect *effect = Effect_Create("effect1", keeper->sprite->x, keeper->sprite->y, "cask", 8);
+      Effect *effect = Effect_Create("effect1_cask", keeper->sprite->x, keeper->sprite->y, "cask", 8);
       effect->sprite->sy = -50;
-      Effect *effectChip1 = Effect_Create("effect1", keeper->sprite->x, keeper->sprite->y, "chip1", 28);
+      Effect *effectChip1 = Effect_Create("effect1_chip1", keeper->sprite->x, keeper->sprite->y, "chip1", 28);
       effectChip1->sprite->sy = -45;
       effectChip1->sprite->sx = -10;
       effectChip1->sprite->ay = 0.1;
       effectChip1->sprite->vy = -0.9;
       effectChip1->sprite->vx = -0.8;
-      Effect *effectChip2 = Effect_Create("effect1", keeper->sprite->x, keeper->sprite->y, "chip2", 28);
+      Effect *effectChip2 = Effect_Create("effect1_chip2", keeper->sprite->x, keeper->sprite->y, "chip2", 28);
       effectChip2->sprite->sy = -45;
       effectChip2->sprite->sx = 10;
       effectChip2->sprite->ay = 0.1;
       effectChip2->sprite->vy = -0.9;
       effectChip2->sprite->vx = 0.8;
-      Effect *effectChip3 = Effect_Create("effect1", keeper->sprite->x, keeper->sprite->y, "chip3", 28);
+      Effect *effectChip3 = Effect_Create("effect1_chip3", keeper->sprite->x, keeper->sprite->y, "chip3", 28);
       effectChip3->sprite->sy = -35;
       effectChip3->sprite->sx = -10;
       effectChip3->sprite->ay = 0.1;
       effectChip3->sprite->vy = -0.3;
       effectChip3->sprite->vx = -0.8;
-      Effect *effectChip4 = Effect_Create("effect1", keeper->sprite->x, keeper->sprite->y, "chip4", 28);
+      Effect *effectChip4 = Effect_Create("effect1_chip4", keeper->sprite->x, keeper->sprite->y, "chip4", 28);
       effectChip4->sprite->sy = -35;
       effectChip4->sprite->sx = 10;
       effectChip4->sprite->ay = 0.1;
@@ -63,7 +63,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       keeper->actionLogicCount = 25;
       keeper->sprite->blink = true;
       // soundManager.play('cask');
-      Effect *effect = Effect_Create("effect1", keeper->sprite->x, keeper->sprite->y, "chopflash", 8);
+      Effect *effect = Effect_Create("effect1_chop", keeper->sprite->x, keeper->sprite->y, "chopflash", 8);
       effect->sprite->sy = -50;
       // new Bonus({
       // 	x: x,
@@ -92,10 +92,10 @@ static void simulatorCallBack(void **charactor)
   }
 }
 
-Keeper *Keeper_Create(float x, float y, const char *actionName, const char *loot)
+Keeper *Keeper_Create(float x, float y, const char *actionName, const char *loot, const char* name)
 {
   Keeper *keeper = (Keeper *)malloc(sizeof(Keeper));
-  strcpy(keeper->name, actionName);
+  strcpy(keeper->name, name);
   strcpy(keeper->actionName, actionName);
   keeper->state = Keeper_Stand;
   keeper->actionLogicCount = 0;

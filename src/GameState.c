@@ -11,7 +11,7 @@ void GameState_Destroy(GameState* gameState) {
 }
 
 void GameState_AddKeeper(Keeper* keeper) {
-  LinkedList_Add(gameState->keeperPool, keeper);
+  LinkedList_Add(gameState->keeperPool, keeper->name);
 }
 LinkedList* GameState_GetKeeperPool() {
   return gameState->keeperPool;

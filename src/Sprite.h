@@ -13,11 +13,19 @@ typedef struct {
 } Frame;
 
 typedef struct {
+	int (*b)[4];
+	int bCount;
+	int (*a)[4];
+	int aCount;
+} AttackRegion;
+
+typedef struct {
 	Frame* frame;
 	bool flip;
 	int duration;
 	float offsetX;
 	float offsetY;
+	AttackRegion* r;
 } ActionFrame;
 
 typedef struct {
@@ -63,10 +71,10 @@ typedef struct Sprite {
 
 Sprite* Sprite_Create();
 void Sprite_init(Sprite* sprite, const char* fileName);
-void Sprite_Destroy(Sprite* sprite);
-int Sprite_GetActionId(Sprite* sprite, const char* actionName);
+void Sprite_Destroy(Sprite *sprite);
+int Sprite_GetActionId(Sprite *sprite, const char *actionName);
 
-void Sprite_Render(Sprite* entity);
+void Sprite_Render(Sprite *entity);
 void Sprite_AddTexturedRectangle(Sprite* sprite, SDL_Renderer* renderer, const char* spritepath, SDL_Rect* srcRect);
 void Sprite_SetPosition(Sprite* sprite, float x, float y);
 void Sprite_SetDimensions(Sprite* sprite, int w, int h);

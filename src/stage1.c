@@ -5,11 +5,10 @@
 #include "EntityManager.h"
 #include "Keeper.h"
 #include "Prophet.h"
+#include "GameState.h"
 
 extern SDLApp* app;
 static Lancelot* lancelot;
-static Keeper* keeperPool[3];
-// static int keeperCount = 0;
 
 static void stage1HandleInput (SDL_Event* event, const Uint8* keysState) {
   if (keysState == NULL) {
@@ -74,9 +73,9 @@ Stage* Stage_Create_1(const char* name) {
   stage->destroy= stage1Destroy;
 
   lancelot = Lancelot_Create(-3, 204, 80);
-  keeperPool[0] = Keeper_Create(464, 164, "cask", "jewelrybag");
-  keeperPool[1] = Keeper_Create(480, 196, "cask", "silverchest");
-  keeperPool[2] = Keeper_Create(704, 155, "fence1", "goldchest");
+  GameState_AddKeeper(Keeper_Create(464, 164, "cask", "jewelrybag", "cask1"));
+  GameState_AddKeeper(Keeper_Create(480, 196, "cask", "silverchest", "cask2"));
+  GameState_AddKeeper(Keeper_Create(704, 155, "fence1", "goldchest", "fence1"));
   
   Prophet_Create(280, 165);
   return stage;
