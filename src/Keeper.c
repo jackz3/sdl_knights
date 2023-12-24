@@ -2,6 +2,8 @@
 #include "sdl_app.h"
 #include "EntityManager.h"
 #include "Effect.h"
+#include "Bonus.h"
+#include "util.h"
 
 
 static void actionCallback(void *charactor, const char *actionName, const char *actionParam)
@@ -48,10 +50,11 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       effectChip4->sprite->ay = 0.1;
       effectChip4->sprite->vx = 0.8;
       effectChip4->sprite->vy = -0.3;
+
+      const char* aName = keeper->loots[rand_int(0, keeper->lootsCount - 1)];
+      Bonus* bonus = Bonus_Create("bonus", keeper->sprite->x, keeper->sprite->y - 2, aName);
+      bonus->actionLogicCount = 20;
       // new Bonus({
-      // 	x: x,
-      // 	y: y - 2,
-      // 	actionLogicCount: 20,
       // 	actionName: loot[Math.floor(Math.random() * loot.length)]
       // });
     }
@@ -64,12 +67,10 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       // soundManager.play('cask');
       Effect *effect = Effect_Create("effect1_chop", keeper->sprite->x, keeper->sprite->y, "chopflash", 8);
       effect->sprite->sy = -50;
-      // new Bonus({
-      // 	x: x,
-      // 	y: y,
-      // 	actionLogicCount: 45,
-      // 	actionName: loot[Math.floor(Math.random() * loot.length)]
-      // });
+
+      const char* aName = keeper->loots[rand_int(0, keeper->lootsCount - 1)];
+      Bonus* bonus = Bonus_Create("bonus2", keeper->sprite->x, keeper->sprite->y, aName);
+      bonus->actionLogicCount = 45;
     }
   }
 }
@@ -98,6 +99,10 @@ Keeper *Keeper_Create(float x, float y, const char *actionName, const char *loot
   strcpy(keeper->actionName, actionName);
   keeper->state = Keeper_Stand;
   keeper->actionLogicCount = 0;
+  keeper->lootsCount = 6;
+  char loots[10][16] = { "goldchest", "silverchest", "jewelrybag", "silverbag", "goldbag", "jewelrychest" };
+  memcpy(keeper->loots, loots, sizeof(keeper->loots));
+  	//  'goldchest,silverchest,jewelrybag,silverbag,goldbag,jewelrychest')
 
   EntityManager_CreateEntity(EntityManager_GetInstance(), keeper->name, keeper);
   Sprite *sprite = EntityManager_GetEntity(EntityManager_GetInstance(), keeper->name);
@@ -115,8 +120,7 @@ Keeper *Keeper_Create(float x, float y, const char *actionName, const char *loot
   sprite->loop = false;
   sprite->toward = false;
   keeper->sprite = sprite;
-  // var spriteID = cfg.spriteID;				//精灵资源id
-  printf("create prophet\n");
+  printf("create keeper\n");
   return keeper;
 }
 

@@ -15,7 +15,8 @@ typedef struct {
 	char actionName[32];				//精灵当前动作
   int actionLogicCount;
 	Sprite* sprite;
-	// var loot = (cfg.loot || 'goldchest,silverchest,jewelrybag,silverbag,goldbag,jewelrychest').split(',');
+	char loots[10][16];
+	int lootsCount;
 } Keeper;
 
 Keeper* Keeper_Create(float x, float y, const char* actionName, const char* loot, const char* name);
