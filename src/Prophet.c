@@ -5,6 +5,8 @@
 #include "EntityManager.h"
 #include "Effect.h"
 #include "util.h"
+#include "ResourceManager.h"
+#include "Sound.h"
 
 
 static void onEnd(void** charactor) {
@@ -32,7 +34,7 @@ void Prophet_Simulator(void** charactor) {
       printf("creating effect index: %i\n", prophet->sprite->frameIndex);
       Effect* effect = Effect_Create("effect1", prophet->sprite->x, prophet->sprite->y, "smoke", 36);
       effect->sprite->toward = prophet->sprite->toward;
-					// soundManager.play('smoke');
+      Sound_Play(ResourceManager_GetSound("smoke"), 0);
     } 
     if (prophet->z != 0 || prophet->vz != 0){
       prophet->vz += prophet->g;

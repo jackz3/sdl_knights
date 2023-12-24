@@ -4,13 +4,13 @@
 #include <SDL2/SDL_image.h>
 #include <string.h>
 
-ResourceManager* ResourceManager_GetInstance() {
-    static ResourceManager* manager = NULL;
+static ResourceManager* manager = NULL;
+bool ResourceManager_Init() {
     if (manager == NULL) {
         manager = (ResourceManager*)malloc(sizeof(ResourceManager));
         if (manager == NULL) {
           printf("create res manager fail!\n");
-          return NULL;
+          return false;
         }
         manager->images = NULL;
         manager->imgCount = 0;
@@ -25,16 +25,18 @@ ResourceManager* ResourceManager_GetInstance() {
         int initStatus = IMG_Init(flags);
         if((initStatus & flags) != flags){
             printf("SDL2_Image format not available \n");
+            return false;
         }
         // Initialize SDL_mixer
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
             printf("Audio library not working: %s\n", Mix_GetError());
+            return false;
         }
     }
-    return manager;
+    return true;
 }
 
-SDL_Surface* ResourceManager_GetSurface(ResourceManager* manager, const char* filepath) {
+SDL_Surface* ResourceManager_GetSurface(const char* filepath) {
     ImgNode* node = manager->images;
     while (node) {
         if (strcmp(node->path, filepath) == 0) {
@@ -64,8 +66,8 @@ SDL_Surface* ResourceManager_GetSurface(ResourceManager* manager, const char* fi
     return NULL;
 }
 
-bool ResourceManager_LoadMusic(ResourceManager* resMgr, const char* name, const char* path) {
-    MusicNode* node = resMgr->musicList;
+bool ResourceManager_LoadMusic(const char* name, const char* path) {
+    MusicNode* node = manager->musicList;
     while (node)
     {
         if(strcmp(node->name, name) == 0) {
@@ -79,18 +81,18 @@ bool ResourceManager_LoadMusic(ResourceManager* resMgr, const char* name, const 
         strncpy(newNode->name, name, sizeof(newNode->name));
         strncpy(newNode->path, path, sizeof(newNode->path));
         newNode->music = music;
-        newNode->next = resMgr->musicList;
+        newNode->next = manager->musicList;
 
-        resMgr->musicList = newNode;
-        resMgr->musicCount++;
+        manager->musicList = newNode;
+        manager->musicCount++;
         return true;
     } else {
         printf("Could not load music: %s\n", Mix_GetError());
         return false;
     }
 }
-Music* ResourceManager_GetMusic(ResourceManager* resMgr, const char* name) {
-    MusicNode* node = resMgr->musicList;
+Music* ResourceManager_GetMusic(const char* name) {
+    MusicNode* node = manager->musicList;
     while (node) {
         if (strcmp(node->name, name) == 0) {
             return node->music;
@@ -100,8 +102,8 @@ Music* ResourceManager_GetMusic(ResourceManager* resMgr, const char* name) {
     return NULL;
 }
 
-bool ResourceManager_LoadSound(ResourceManager* resMgr, const char* name, const char* path) {
-    SoundNode* node = resMgr->sounds;
+bool ResourceManager_LoadSound(const char* name, const char* path) {
+    SoundNode* node = manager->sounds;
     while (node)
     {
         if(strcmp(node->name, name) == 0) {
@@ -115,10 +117,10 @@ bool ResourceManager_LoadSound(ResourceManager* resMgr, const char* name, const 
         strncpy(newNode->name, name, sizeof(newNode->name));
         strncpy(newNode->path, path, sizeof(newNode->path));
         newNode->sound = sound;
-        newNode->next = resMgr->sounds;
+        newNode->next = manager->sounds;
 
-        resMgr->sounds = newNode;
-        resMgr->soundCount++;
+        manager->sounds = newNode;
+        manager->soundCount++;
         return true;
     } else {
         printf("Could not load music: %s\n", Mix_GetError());
@@ -126,8 +128,8 @@ bool ResourceManager_LoadSound(ResourceManager* resMgr, const char* name, const 
     }
 }
 
-Sound* ResourceManager_GetSound(ResourceManager* resMgr, const char* name) {
-    SoundNode* node = resMgr->sounds;
+Sound* ResourceManager_GetSound(const char* name) {
+    SoundNode* node = manager->sounds;
     while (node) {
         if (strcmp(node->name, name) == 0) {
             return node->sound;
@@ -137,8 +139,8 @@ Sound* ResourceManager_GetSound(ResourceManager* resMgr, const char* name) {
     return NULL;
 }
 
-bool ResourceManager_LoadFont(ResourceManager* resMgr, const char* name, const char* path) {
-    FontNode* node = resMgr->fonts;
+bool ResourceManager_LoadFont(const char* name, const char* path) {
+    FontNode* node = manager->fonts;
     while (node) {
         if (strcmp(node->name, name) == 0) {
             return true;
@@ -151,18 +153,18 @@ bool ResourceManager_LoadFont(ResourceManager* resMgr, const char* name, const c
         strncpy(newNode->name, name, sizeof(newNode->name));
         strncpy(newNode->path, path, sizeof(newNode->path));
         newNode->font = text;
-        newNode->next = resMgr->fonts;
+        newNode->next = manager->fonts;
 
-        resMgr->fonts= newNode;
-        resMgr->fontCount++;
+        manager->fonts= newNode;
+        manager->fontCount++;
         return true;
     }
 
     return false;
 }
 
-DynamicText* ResourceManager_GetFont(ResourceManager* resMgr, const char* name) {
-    FontNode* node = resMgr->fonts;
+DynamicText* ResourceManager_GetFont(const char* name) {
+    FontNode* node = manager->fonts;
     while (node) {
         if (strcmp(node->name, name) == 0) {
             return node->font;
@@ -172,7 +174,7 @@ DynamicText* ResourceManager_GetFont(ResourceManager* resMgr, const char* name) 
     return NULL;
 }
 
-void ResourceManager_Destroy(ResourceManager* manager) {
+void ResourceManager_Destroy() {
     if (manager == NULL) {
         return;
     }

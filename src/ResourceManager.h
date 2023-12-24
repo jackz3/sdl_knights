@@ -45,14 +45,14 @@ typedef struct {
     int musicCount;
 } ResourceManager;
 
-ResourceManager* ResourceManager_GetInstance();
-SDL_Surface* ResourceManager_GetSurface(ResourceManager* manager, const char* filepath);
-void ResourceManager_Destroy(ResourceManager* manager);
-bool ResourceManager_LoadFont(ResourceManager* resMgr, const char* name, const char* path);
-DynamicText* ResourceManager_GetFont(ResourceManager* resMgr, const char* name);
-bool ResourceManager_LoadSound(ResourceManager* resMgr, const char* name, const char* path);
-Sound* ResourceManager_GetSound(ResourceManager* resMgr, const char* name);
-bool ResourceManager_LoadMusic(ResourceManager* resMgr, const char* name, const char* path);
-Music* ResourceManager_GetMusic(ResourceManager* resMgr, const char* name);
+bool ResourceManager_Init();
+SDL_Surface* ResourceManager_GetSurface(const char* filepath);
+void ResourceManager_Destroy();
+bool ResourceManager_LoadFont(const char* name, const char* path);
+DynamicText* ResourceManager_GetFont(const char* name);
+bool ResourceManager_LoadSound(const char* name, const char* path);
+Sound* ResourceManager_GetSound(const char* name);
+bool ResourceManager_LoadMusic(const char* name, const char* path);
+Music* ResourceManager_GetMusic(const char* name);
 
 #endif

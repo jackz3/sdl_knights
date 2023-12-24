@@ -3,6 +3,8 @@
 #include "Effect.h"
 #include "GameState.h"
 #include "util.h"
+#include "ResourceManager.h"
+#include "Sound.h"
 
 // extern SDLApp *app;
 
@@ -100,7 +102,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
    */
   if (strcmp(actionName, "lightslash") == 0)
   {
-    // soundManager.play('lightslash');
+    Sound_Play(ResourceManager_GetSound("lightslash"), 0);
     sprite->actionIndex = Sprite_GetActionId(sprite, "lightslash");
     sprite->frameIndex = 0;
     sprite->loop = false;
@@ -114,7 +116,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
    */
   if (strcmp(actionName, "comboslash2") == 0)
   {
-    // soundManager.play('lightslash');
+    Sound_Play(ResourceManager_GetSound("lightslash"), 0);
     sprite->actionIndex = Sprite_GetActionId(sprite, "comboslash2");
     sprite->frameIndex = 0;
     sprite->loop = false;
@@ -127,7 +129,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
    */
   if (strcmp(actionName, "comboslash3") == 0)
   {
-    // soundManager.play('lightslash');
+    Sound_Play(ResourceManager_GetSound("lightslash"), 0);
     sprite->actionIndex = Sprite_GetActionId(sprite, "comboslash3");
     sprite->frameIndex = 0;
     sprite->loop = false;
@@ -140,7 +142,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
    */
   if (strcmp(actionName, "comboslash4") == 0)
   {
-    // soundManager.play('lightslash');
+    Sound_Play(ResourceManager_GetSound("lightslash"), 0);
     sprite->actionIndex = Sprite_GetActionId(sprite, "comboslash4");
     sprite->frameIndex = 0;
     sprite->loop = false;
@@ -187,7 +189,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
    */
   if (strcmp(actionName, "jumpslash") == 0)
   {
-    // soundManager.play('doubleslash');
+    Sound_Play(ResourceManager_GetSound("doubleslash"), 0);
     lancelot->state = Lancelot_Jumpslash;
     sprite->actionIndex = Sprite_GetActionId(sprite, "jumpslash");
     sprite->frameIndex = 0;
@@ -199,7 +201,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
    */
   if (strcmp(actionName, "backslash") == 0)
   {
-    // soundManager.play('lightslash');
+    Sound_Play(ResourceManager_GetSound("lightslash"), 0);
     lancelot->state = Lancelot_Backslash;
     sprite->actionIndex = Sprite_GetActionId(sprite, "backslash");
     sprite->frameIndex = 0;
@@ -409,7 +411,7 @@ void simulator(void **charactor)
         actionCallback(lancelot, "stand", NULL);
         if (state != Lancelot_Kick)
         {
-          // soundManager.play('floor');
+          Sound_Play(ResourceManager_GetSound("floor"), 0);
         }
         // createDust();
       }

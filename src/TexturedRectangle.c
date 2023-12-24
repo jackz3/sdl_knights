@@ -17,7 +17,7 @@ TexturedRectangle* TexturedRectangle_CreateWithColorKey(SDL_Renderer* renderer, 
     // SDL_Rect* rect = malloc(sizeof(SDL_Rect));
     // memcpy(rect, &srcRect, sizeof(SDL_Rect));
     rectangle->srcRect = srcRect;
-    SDL_Surface* retrieveSurface = ResourceManager_GetSurface(ResourceManager_GetInstance(), filepath);
+    SDL_Surface* retrieveSurface = ResourceManager_GetSurface(filepath);
     // SDL_SetColorKey(retrieveSurface, SDL_TRUE, SDL_MapRGB(retrieveSurface->format, redColorKey, greenColorKey, blueColorKey));
     rectangle->texture = SDL_CreateTextureFromSurface(renderer, retrieveSurface);
 

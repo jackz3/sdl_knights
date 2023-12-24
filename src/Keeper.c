@@ -4,6 +4,8 @@
 #include "Effect.h"
 #include "Bonus.h"
 #include "util.h"
+#include "Sound.h"
+#include "ResourceManager.h"
 
 
 static void actionCallback(void *charactor, const char *actionName, const char *actionParam)
@@ -23,7 +25,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       keeper->sprite->actionIndex = Sprite_GetActionId(keeper->sprite, "cask-b");
       keeper->actionLogicCount = 25;
       keeper->sprite->blink = true;
-      // soundManager.play('cask');
+      Sound_Play(ResourceManager_GetSound("cask"), 0);
       Effect *effect = Effect_Create("effect1_cask", keeper->sprite->x, keeper->sprite->y, "cask", 8);
       effect->sprite->sy = -50;
       Effect *effectChip1 = Effect_Create("effect1_chip1", keeper->sprite->x, keeper->sprite->y, "chip1", 28);
@@ -54,9 +56,6 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       const char* aName = keeper->loots[rand_int(0, keeper->lootsCount - 1)];
       Bonus* bonus = Bonus_Create("bonus", keeper->sprite->x, keeper->sprite->y - 2, aName);
       bonus->actionLogicCount = 20;
-      // new Bonus({
-      // 	actionName: loot[Math.floor(Math.random() * loot.length)]
-      // });
     }
     else if (strcmp(an, "fence1") == 0 || strcmp(an, "fence2") == 0)
     {
@@ -64,7 +63,7 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       keeper->sprite->actionIndex = Sprite_GetActionId(keeper->sprite, "fence1-b");
       keeper->actionLogicCount = 25;
       keeper->sprite->blink = true;
-      // soundManager.play('cask');
+      Sound_Play(ResourceManager_GetSound("cask"), 0);
       Effect *effect = Effect_Create("effect1_chop", keeper->sprite->x, keeper->sprite->y, "chopflash", 8);
       effect->sprite->sy = -50;
 

@@ -112,8 +112,8 @@ int main(int argc, char *argv[])
 
     Camera_Create();
     Camera_SetMaxWidth(800);
-    ResourceManager *rm = ResourceManager_GetInstance();
-    ResourceManager_LoadFont(rm, "peaberry", "./assets/fonts/PeaberryMono.ttf");
+    ResourceManager_Init();
+    ResourceManager_LoadFont("peaberry", "./assets/fonts/PeaberryMono.ttf");
 
     farBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
     SDL_Rect srcRect = {0, 0, VIRTUALWIDTH, VIRTUALHEIGHT};
@@ -123,13 +123,40 @@ int main(int argc, char *argv[])
     nearBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
     BG_AddTexture(nearBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_f.png", &srcRect);
 
-    ResourceManager_LoadSound(rm, "bonus", "./assets/sounds/bonus.mp3");
-    ResourceManager_LoadMusic(rm, "bg", "./assets/sounds/bg.mp3");
-    // Music_Play(ResourceManager_GetMusic(rm, "bg"), -1);
+    char soundList[][32] = {
+			"powerwave",
+			"smoke",
+			"lightslash",
+			"heavyslash",
+			"floor",
+			"doubleslash",
+			"blood",
+			"wound",
+			"bonus",
+			"clank",
+			"cask",
+			"victory",
+			"armorflash",
+			"boss1",
+			"boss2",
+			"death",
+			"death2",
+			"death3",
+			"death4",
+			"scorn",
+			"victory2",
+			"victory3",
+			"bonusfood",
+			"revert"
+		};
+    for (int i = 0, l = sizeof(soundList) / sizeof(soundList[0]); i < l; i++) {
+        char path[128];
+        sprintf(path, "./assets/sounds/%s.mp3", soundList[i]); 
+        ResourceManager_LoadSound(soundList[i], path);
+    }
+
     GameState_Init();
     StageManager_Init();
-    // playerPool.push(lancelot = new Lancelot({x: -3, y: 204, health:lancelotHealth || 80}));
-
 
     // Set callback functions
     SDLApp_SetEventCallback(HandleEvents);
@@ -141,7 +168,7 @@ int main(int argc, char *argv[])
     SDLApp_RunLoop();
     // Clean up our application
     SDLApp_Destroy();
-    ResourceManager_Destroy(rm);
+    ResourceManager_Destroy();
 	  EntityManager_DeleteAll(EntityManager_GetInstance());
     return 0;
 }
