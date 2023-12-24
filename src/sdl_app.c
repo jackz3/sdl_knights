@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <time.h>
 
+static SDLApp* app = NULL;
+
 SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, int w, int h)
 {
-    SDLApp *app = (SDLApp *)malloc(sizeof(SDLApp));
+    app = (SDLApp *)malloc(sizeof(SDLApp));
     app->window = NULL;
     app->renderer = NULL;
     app->maxFrameRate = 60;
@@ -19,7 +21,7 @@ SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, in
     app->renderCallback = NULL;
     app->timers = NULL;
     app->timerCount = 0;
-    app->cam= Camera_Create();
+    // app->cam= Camera_Create();
     // app->keyState.a = 0;
     memset(&app->keyState, 0, sizeof(KeyState));
 
@@ -37,10 +39,10 @@ SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, in
     app->renderer = SDL_CreateRenderer(app->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     srand(time(0));
-    return app;
+    // return app;
 }
 
-void SDLApp_Destroy(SDLApp *app)
+void SDLApp_Destroy()
 {
     if (app == NULL)
     {
@@ -55,17 +57,17 @@ void SDLApp_Destroy(SDLApp *app)
     free(app);
 }
 
-void SDLApp_SetEventCallback(SDLApp *app, void (*func)(void))
+void SDLApp_SetEventCallback(void (*func)(void))
 {
     app->eventCallback = func;
 }
 
-void SDLApp_SetUpdateCallback(SDLApp *app, void (*func)(Uint32 delta))
+void SDLApp_SetUpdateCallback(void (*func)(Uint32 delta))
 {
     app->updateCallback = func;
 }
 
-void SDLApp_SetRenderCallback(SDLApp *app, void (*func)(void))
+void SDLApp_SetRenderCallback(void (*func)(void))
 {
     app->renderCallback = func;
 }
@@ -115,7 +117,7 @@ static void mainloop(void *app_) /* this will run often, possibly at the monitor
     }
 }
 
-void SDLApp_RunLoop(SDLApp *app)
+void SDLApp_RunLoop()
 {
 #ifdef __EMSCRIPTEN__
     SDLApp_Destroy(app);
@@ -129,42 +131,42 @@ void SDLApp_RunLoop(SDLApp *app)
 #endif
 }
 
-void SDLApp_SetMaxFrameRate(SDLApp *app, int frameRate)
+void SDLApp_SetMaxFrameRate(int frameRate)
 {
     app->maxFrameRate = frameRate;
 }
 
-SDL_Renderer *SDLApp_GetRenderer(SDLApp *app)
+SDL_Renderer *SDLApp_GetRenderer()
 {
     return app->renderer;
 }
 
-int SDLApp_GetMouseX(SDLApp *app)
+int SDLApp_GetMouseX()
 {
     return app->mouseX;
 }
 
-int SDLApp_GetMouseY(SDLApp *app)
+int SDLApp_GetMouseY()
 {
     return app->mouseY;
 }
 
-int SDLApp_GetWindowWidth(SDLApp *app)
+int SDLApp_GetWindowWidth()
 {
     return app->width;
 }
 
-int SDLApp_GetWindowHeight(SDLApp *app)
+int SDLApp_GetWindowHeight()
 {
     return app->height;
 }
 
-void SDLApp_StopAppLoop(SDLApp *app)
+void SDLApp_StopAppLoop()
 {
     app->gameIsRunning = 0;
 }
 
-SDL_TimerID SDLApp_AddTimer(SDLApp *app, Uint32 delay, SDL_TimerCallback callback, void *param)
+SDL_TimerID SDLApp_AddTimer(Uint32 delay, SDL_TimerCallback callback, void *param)
 {
     if (app->timers == NULL)
     {
@@ -181,7 +183,7 @@ SDL_TimerID SDLApp_AddTimer(SDLApp *app, Uint32 delay, SDL_TimerCallback callbac
     return timerID;
 }
 
-SDL_TimerID SDLApp_AddRecurringTimer(SDLApp *app, Uint32 interval, SDL_TimerCallback callback, void *param)
+SDL_TimerID SDLApp_AddRecurringTimer(Uint32 interval, SDL_TimerCallback callback, void *param)
 {
     if (app->timers == NULL)
     {
@@ -198,7 +200,7 @@ SDL_TimerID SDLApp_AddRecurringTimer(SDLApp *app, Uint32 interval, SDL_TimerCall
     return timerID;
 }
 
-void SDLApp_RemoveTimer(SDLApp *app, SDL_TimerID id)
+void SDLApp_RemoveTimer(SDL_TimerID id)
 {
     for (int i = 0; i < app->timerCount; i++)
     {
@@ -214,4 +216,8 @@ void SDLApp_RemoveTimer(SDLApp *app, SDL_TimerID id)
             break;
         }
     }
+}
+
+KeyState* SDLApp_GetKeyState() {
+    return &app->keyState;
 }

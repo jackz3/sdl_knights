@@ -21,7 +21,7 @@
 // res loader
 // scroll manager
 
-SDLApp *app;
+// SDLApp *app;
 
 BG* farBg;
 BG* midBg;
@@ -37,14 +37,14 @@ void HandleEvents()
     {
         if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE || event.type == SDL_WINDOWEVENT_CLOSE)
         {
-            SDLApp_StopAppLoop(app);
+            SDLApp_StopAppLoop();
         }
         else if (event.type == SDL_KEYDOWN)
         {
             switch (event.key.keysym.sym)
             {
             case SDLK_ESCAPE:
-                SDLApp_StopAppLoop(app);
+                SDLApp_StopAppLoop();
                 break;
             case SDLK_RETURN:
                 break;
@@ -63,11 +63,11 @@ void HandleEvents()
     else{
     } 
     if (state[SDL_SCANCODE_LEFT]) {
-        app->cam->x--;
+        Camera_MoveX(-1);
     }
     if (state[SDL_SCANCODE_RIGHT]) {
-        app->cam->x += 2;
-        printf("left %f \n", app->cam->x);
+        Camera_MoveX(2);
+        printf("left %f \n", Camera_GetX());
     }
 }
 
@@ -81,18 +81,18 @@ void HandleUpdate(Uint32 delta)
 // Handle the rendering of the game entities
 void HandleRendering()
 {
-    Camera_Adjust(app->cam);
-    float sx = app->cam->x * 0.7;
+    Camera_Adjust();
+    float sx = Camera_GetX() * 0.7;
     TexturedRectangle_SetSrcPosition(farBg->m_texture, sx, 0);
     BG_Render(farBg);
-    Camera_Adjust(app->cam);
-    TexturedRectangle_SetSrcPosition(midBg->m_texture, app->cam->x, 0);
+    Camera_Adjust();
+    TexturedRectangle_SetSrcPosition(midBg->m_texture, Camera_GetX(), 0);
     BG_Render(midBg);
     printf("rendering\n");
     Stage_Render();
 
-    Camera_Adjust(app->cam);
-    TexturedRectangle_SetSrcPosition(nearBg->m_texture, app->cam->x, 0);
+    Camera_Adjust();
+    TexturedRectangle_SetSrcPosition(nearBg->m_texture, Camera_GetX(), 0);
     BG_Render(nearBg);
 }
 
@@ -107,20 +107,21 @@ int main(int argc, char *argv[])
 {
     // Setup the SDLApp
     const char *title = "SDL2 Knights_Of_Round";
-    app = SDLApp_Create(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER, title, 80, 80, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
-    SDLApp_SetMaxFrameRate(app, 16);
+    SDLApp_Create(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER, title, 80, 80, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
+    SDLApp_SetMaxFrameRate(16);
 
-    Camera_SetMaxWidth(app->cam, 800);
+    Camera_Create();
+    Camera_SetMaxWidth(800);
     ResourceManager *rm = ResourceManager_GetInstance();
     ResourceManager_LoadFont(rm, "peaberry", "./assets/fonts/PeaberryMono.ttf");
 
     farBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
     SDL_Rect srcRect = {0, 0, VIRTUALWIDTH, VIRTUALHEIGHT};
-    BG_AddTexture(farBg, app->renderer, "./assets/images/stage1_1_b.png", &srcRect);
+    BG_AddTexture(farBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_b.png", &srcRect);
     midBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
-    BG_AddTexture(midBg, app->renderer, "./assets/images/stage1_1_m.png", &srcRect);
+    BG_AddTexture(midBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_m.png", &srcRect);
     nearBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
-    BG_AddTexture(nearBg, app->renderer, "./assets/images/stage1_1_f.png", &srcRect);
+    BG_AddTexture(nearBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_f.png", &srcRect);
 
     ResourceManager_LoadSound(rm, "bonus", "./assets/sounds/bonus.mp3");
     ResourceManager_LoadMusic(rm, "bg", "./assets/sounds/bg.mp3");
@@ -131,15 +132,15 @@ int main(int argc, char *argv[])
 
 
     // Set callback functions
-    SDLApp_SetEventCallback(app, HandleEvents);
-    SDLApp_SetUpdateCallback(app, HandleUpdate);
-    SDLApp_SetRenderCallback(app, HandleRendering);
+    SDLApp_SetEventCallback(HandleEvents);
+    SDLApp_SetUpdateCallback(HandleUpdate);
+    SDLApp_SetRenderCallback(HandleRendering);
 
     // Add some timers (for demonstration purpose)
     // SDLApp_AddTimer(app, 2000, my_callbackfunc, (char *)"timer called");
-    SDLApp_RunLoop(app);
+    SDLApp_RunLoop();
     // Clean up our application
-    SDLApp_Destroy(app);
+    SDLApp_Destroy();
     ResourceManager_Destroy(rm);
 	  EntityManager_DeleteAll(EntityManager_GetInstance());
     return 0;

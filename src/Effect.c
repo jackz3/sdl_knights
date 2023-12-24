@@ -2,8 +2,6 @@
 #include "sdl_app.h"
 #include "EntityManager.h"
 
-extern SDLApp* app;
-
 void Effect_ActionCallback(void* charactor, const char* actionName, const char* actionParam) {
 
 }
@@ -28,7 +26,7 @@ Effect* Effect_Create(const char* spriteId, float x, float y, const char* action
   EntityManager_CreateEntity(EntityManager_GetInstance(), effect->spriteID, effect);
   Sprite* sprite = EntityManager_GetEntity(EntityManager_GetInstance(), effect->spriteID);
   SDL_Rect* rect = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-  Sprite_AddTexturedRectangle(sprite, app->renderer, "./assets/images/effect1.png", rect);
+  Sprite_AddTexturedRectangle(sprite, SDLApp_GetRenderer(), "./assets/images/effect1.png", rect);
   Sprite_SetPosition(sprite, x, y);
 
   Sprite_init(sprite, "./assets/effect1.json");

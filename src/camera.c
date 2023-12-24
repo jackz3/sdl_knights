@@ -1,22 +1,26 @@
 #include "camera.h"
 #include <stdlib.h>
 
-Camera* Camera_Create() {
-  Camera* cam = (Camera*)malloc(sizeof(Camera));
-  cam->x = 0;
-  cam->y = 0;
+static Camera* camera = NULL;
+
+bool Camera_Create() {
+  camera = (Camera*)malloc(sizeof(Camera));
+  if (camera == NULL) return false;
+  camera->x = 0;
+  camera->y = 0;
+  return true;
 }
-void Camera_Destroy(Camera* cam) {
-  free(cam);
+void Camera_Destroy() {
+  free(camera);
 }
 
-void Camera_Adjust(Camera* cam) {
-  if (cam->x < 0) cam->x = 0;
-  if (cam->x > cam->maxWidth)
-    cam->x = cam->maxWidth;
+void Camera_Adjust() {
+  if (camera->x < 0) camera->x = 0;
+  if (camera->x > camera->maxWidth)
+    camera->x = camera->maxWidth;
 } 
 
-void Camera_Correct(Camera* cam) {
+void Camera_Correct() {
     // if (!baseSprite) return;
 		// if (baseSprite.x - scrollManager.camera[0] > 220){
 		// 	scrollManager.camera[0] = baseSprite.x - 220;
@@ -26,6 +30,20 @@ void Camera_Correct(Camera* cam) {
 		// }
 }
 
-void Camera_SetMaxWidth(Camera* cam, int maxWidth) {
-  cam->maxWidth = maxWidth;
+void Camera_SetMaxWidth(int maxWidth) {
+  camera->maxWidth = maxWidth;
+}
+
+void Camera_MoveX(float x) {
+  camera->x += x;
+}
+
+float Camera_GetX() {
+  return camera->x;
+}
+void Camera_SetX(float x) {
+  camera->x = x;
+}
+float Camera_GetY() {
+  return camera->y;
 }

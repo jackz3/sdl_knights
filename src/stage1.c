@@ -7,7 +7,6 @@
 #include "Prophet.h"
 #include "GameState.h"
 
-extern SDLApp* app;
 static Lancelot* lancelot;
 
 static void stage1HandleInput (SDL_Event* event, const Uint8* keysState) {
@@ -15,7 +14,7 @@ static void stage1HandleInput (SDL_Event* event, const Uint8* keysState) {
     return; 
   }
   const Uint8* state = keysState;
-  KeyState* keyState = &app->keyState;
+  KeyState* keyState = SDLApp_GetKeyState();// &app->keyState;
     if (state[SDL_SCANCODE_W])
     {
         keyState->up = 1;
@@ -52,7 +51,7 @@ static void stage1HandleInput (SDL_Event* event, const Uint8* keysState) {
 
 static void stage1Update (Uint32 delta) {
     EntityManager_Simulate(EntityManager_GetInstance()); 
-    Lancelot_Controller(lancelot, &app->keyState);
+    Lancelot_Controller(lancelot, SDLApp_GetKeyState());
 }
 static void stage1Render() {
     EntityManager_Render(EntityManager_GetInstance());

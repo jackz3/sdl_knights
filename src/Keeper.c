@@ -3,7 +3,6 @@
 #include "EntityManager.h"
 #include "Effect.h"
 
-extern SDLApp *app;
 
 static void actionCallback(void *charactor, const char *actionName, const char *actionParam)
 {
@@ -103,7 +102,7 @@ Keeper *Keeper_Create(float x, float y, const char *actionName, const char *loot
   EntityManager_CreateEntity(EntityManager_GetInstance(), keeper->name, keeper);
   Sprite *sprite = EntityManager_GetEntity(EntityManager_GetInstance(), keeper->name);
   SDL_Rect *rect = (SDL_Rect *)malloc(sizeof(SDL_Rect));
-  Sprite_AddTexturedRectangle(sprite, app->renderer, "./assets/images/keeper01.png", rect);
+  Sprite_AddTexturedRectangle(sprite, SDLApp_GetRenderer(), "./assets/images/keeper01.png", rect);
   Sprite_SetPosition(sprite, x, y);
   Sprite_init(sprite, "./assets/keeper01.json");
   Sprite_SetActionCallBack(sprite, actionCallback);

@@ -32,20 +32,20 @@ typedef struct {
 } SDLApp;
 
 SDLApp* SDLApp_Create(Uint32 subsystemFlags, const char* title, int x, int y, int w, int h);
-void SDLApp_Destroy(SDLApp* app);
-void SDLApp_SetEventCallback(SDLApp* app, void (*func)(void));
-void SDLApp_SetUpdateCallback(SDLApp* app, void (*func)(Uint32 delta));
-void SDLApp_SetRenderCallback(SDLApp* app, void (*func)(void));
-void SDLApp_RunLoop(SDLApp* app);
-void SDLApp_SetMaxFrameRate(SDLApp* app, int frameRate);
-SDL_Renderer* SDLApp_GetRenderer(SDLApp* app);
-int SDLApp_GetMouseX(SDLApp* app);
-int SDLApp_GetMouseY(SDLApp* app);
-int SDLApp_GetWindowWidth(SDLApp* app);
-int SDLApp_GetWindowHeight(SDLApp* app);
-void SDLApp_StopAppLoop(SDLApp* app);
-SDL_TimerID SDLApp_AddTimer(SDLApp* app, Uint32 delay, SDL_TimerCallback callback, void* param);
-SDL_TimerID SDLApp_AddRecurringTimer(SDLApp* app, Uint32 interval, SDL_TimerCallback callback, void* param);
-void SDLApp_RemoveTimer(SDLApp* app, SDL_TimerID id);
-
+void SDLApp_Destroy();
+void SDLApp_SetEventCallback(void (*func)(void));
+void SDLApp_SetUpdateCallback(void (*func)(Uint32 delta));
+void SDLApp_SetRenderCallback(void (*func)(void));
+void SDLApp_RunLoop();
+void SDLApp_SetMaxFrameRate(int frameRate);
+SDL_Renderer* SDLApp_GetRenderer();
+int SDLApp_GetMouseX();
+int SDLApp_GetMouseY();
+int SDLApp_GetWindowWidth();
+int SDLApp_GetWindowHeight();
+void SDLApp_StopAppLoop();
+SDL_TimerID SDLApp_AddTimer(Uint32 delay, SDL_TimerCallback callback, void* param);
+SDL_TimerID SDLApp_AddRecurringTimer(Uint32 interval, SDL_TimerCallback callback, void* param);
+void SDLApp_RemoveTimer(SDL_TimerID id);
+KeyState* SDLApp_GetKeyState();
 #endif

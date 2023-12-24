@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "util.h"
 
-extern SDLApp *app;
+// extern SDLApp *app;
 
 static void actionCallback(void *charactor, const char *actionName, const char *actionParam);
 static void actionStand(void **charactor)
@@ -259,7 +259,7 @@ void simulator(void **charactor)
 {
   Lancelot *lancelot = (Lancelot *)*charactor;
   Sprite *sprite = lancelot->sprite;
-  KeyState *keyState = &app->keyState;
+  KeyState *keyState = SDLApp_GetKeyState();// &app->keyState;
   enum LancelotState state = lancelot->state;
   if (lancelot->z < 0)
   {
@@ -474,7 +474,7 @@ Lancelot *Lancelot_Create(float x, float y, float health)
   EntityManager_CreateEntity(EntityManager_GetInstance(), lancelot->name, lancelot);
   Sprite *sprite = EntityManager_GetEntity(EntityManager_GetInstance(), lancelot->name);
   SDL_Rect *rect = (SDL_Rect *)malloc(sizeof(SDL_Rect));
-  Sprite_AddTexturedRectangle(sprite, app->renderer, "./assets/images/lancelot.png", rect);
+  Sprite_AddTexturedRectangle(sprite, SDLApp_GetRenderer(), "./assets/images/lancelot.png", rect);
   Sprite_SetPosition(sprite, x, y);
   Sprite_init(sprite, "./assets/lancelot.json");
   Sprite_SetActionCallBack(sprite, actionCallback);

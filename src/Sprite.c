@@ -8,8 +8,6 @@
 #include "config.h"
 #include "sdl_app.h"
 
-extern SDLApp *app;
-
 Sprite *Sprite_Create()
 {
   Sprite *sprite = (Sprite *)malloc(sizeof(Sprite));
@@ -341,16 +339,16 @@ void Sprite_Render(Sprite* sprite) {
         TexturedRectangle_SetSrcPosition(sprite->m_texture, frame->left, frame->top);
         TexturedRectangle_SetSrcDimension(sprite->m_texture, frame->width, frame->height);
         bool flip = sprite->toward ? !actionFrame->flip : actionFrame->flip;
-        float tx = (sprite->x + sprite->sx + actionFrame->offsetX - app->cam->x);
+        float tx = (sprite->x + sprite->sx + actionFrame->offsetX - Camera_GetX());
         if (!flip) {
         TexturedRectangle_Render(sprite->m_texture,
                                  tx * SCALE,
-                                 (sprite->y + sprite->sy + actionFrame->offsetY - app->cam->y) * SCALE,
+                                 (sprite->y + sprite->sy + actionFrame->offsetY - Camera_GetY()) * SCALE,
                                  frame->width * SCALE, frame->height * SCALE);
         } else {
         TexturedRectangle_RenderEx(sprite->m_texture,
                                  (tx)  * SCALE,
-                                 (sprite->y + sprite->sy + actionFrame->offsetY - app->cam->y) * SCALE,
+                                 (sprite->y + sprite->sy + actionFrame->offsetY - Camera_GetY()) * SCALE,
                                  frame->width * SCALE, frame->height * SCALE, SDL_FLIP_HORIZONTAL);
 
         }
@@ -440,9 +438,9 @@ void Sprite_nextActionFrame(Sprite *sprite, void *charactor)
   }
 }
 
-void Sprite_SetSimulatorCallBack(Sprite *app, void (*func)(void **))
+void Sprite_SetSimulatorCallBack(Sprite *sprite, void (*func)(void **))
 {
-  app->simulatorCallBack = func;
+  sprite->simulatorCallBack = func;
 }
 void Sprite_simulatorCallBack(Sprite *sprite, void **charactor)
 {

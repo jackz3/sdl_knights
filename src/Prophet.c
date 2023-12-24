@@ -7,8 +7,6 @@
 #include "util.h"
 
 
-extern SDLApp* app;
-
 static void onEnd(void** charactor) {
   Prophet* prophet = (Prophet*)*charactor;
   Prophet_Destroy(prophet); 
@@ -74,7 +72,7 @@ Prophet* Prophet_Create(float x, float y) {
   EntityManager_CreateEntity(EntityManager_GetInstance(), prophet->name, prophet);
   Sprite* sprite = EntityManager_GetEntity(EntityManager_GetInstance(), prophet->name);
   SDL_Rect* rect = (SDL_Rect*)malloc(sizeof(SDL_Rect));
-  Sprite_AddTexturedRectangle(sprite, app->renderer, "./assets/images/prophet.png", rect);
+  Sprite_AddTexturedRectangle(sprite, SDLApp_GetRenderer(), "./assets/images/prophet.png", rect);
   Sprite_SetPosition(sprite, x, y);
   Sprite_init(sprite, "./assets/prophet.json");
   Sprite_SetActionCallBack(sprite, Prophet_ActionCallback);
