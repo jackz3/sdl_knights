@@ -30,6 +30,7 @@ enum LancelotState
   Lancelot_Defense,
   Lancelot_Backslash,
   Lancelot_Powerslash,
+  Lancelot_Revert,
 };
 
 enum ControlState {

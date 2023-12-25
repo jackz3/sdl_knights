@@ -27,5 +27,13 @@ LinkedList* LinkedList_Create();
 void LinkedList_Destroy(LinkedList* list);
 void LinkedList_Add(LinkedList* list, void* item);
 
+typedef struct 
+{
+	char key[16];
+	int value;
+} KV;
+
+int KV_GetValue(KV* kv, int count, char* key);
+
 
 #endif

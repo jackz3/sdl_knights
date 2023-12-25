@@ -97,3 +97,12 @@ void LinkedList_Add(LinkedList* list, void* item) {
     list->items = node;
     list->itemCount++;
 }
+
+int KV_GetValue(KV* kv, int count, char* key) {
+    for (int i = 0; i < count; i++) {
+        if (strcmp(kv[i].key, key) == 0) {
+            return kv[i].value;
+        }
+    }
+    return -10000;
+}

@@ -254,21 +254,17 @@ static void actionCallback(void *charactor, const char *actionName, const char *
       sprite->toward = 0;
     }
   }
-
 }
 
 void simulator(void **charactor)
 {
   Lancelot *lancelot = (Lancelot *)*charactor;
   Sprite *sprite = lancelot->sprite;
-  KeyState *keyState = SDLApp_GetKeyState();// &app->keyState;
+  KeyState *keyState = SDLApp_GetKeyState(); // &app->keyState;
   enum LancelotState state = lancelot->state;
   if (lancelot->z < 0)
   {
-    static int i = 0;
-    char name[16];
-    sprintf(name, "effect1_%i", i++);
-    Effect *effect = Effect_Create(name, lancelot->sprite->x, lancelot->sprite->y, "shadow", 2);
+    Effect *effect = Effect_Create("effect1", lancelot->sprite->x, lancelot->sprite->y, "shadow", 2);
     effect->sprite->loop = true;
   }
   switch (state)
@@ -419,21 +415,59 @@ void simulator(void **charactor)
     sprite->sy = lancelot->z;
     break;
   }
-  		/**
-		 * 击中keeper
-		 */
-  LinkedList *keeperPool = GameState_GetKeeperPool();
-  ItemNode* node = keeperPool->items;
-  while(node) {
-    char* name = (char*)node->item;
-    Keeper* keeper = (Keeper*)EntityManager_GetCharactor(EntityManager_GetInstance(), name);
-    if (keeper != NULL && collisionDetector(lancelot->sprite, (keeper)->sprite, 999, false, NULL)) {
-        if (state != Lancelot_Powerslash || strcmp((keeper)->sprite->actions[(keeper)->sprite->actionIndex].name, "fence1") == 0) {
-          Keeper_Unpack(keeper);
-				}
-			}
+  /**
+   * 击中bonus
+   */
+  LinkedList *bonusPool = GameState_GetBonusPool();
+  ItemNode *node = bonusPool->items;
+  while (node)
+  {
+    char *name = (char *)node->item;
+    Bonus *bonus = (Bonus *)EntityManager_GetCharactor(EntityManager_GetInstance(), name);
+    if (bonus != NULL && collisionDetector(lancelot->sprite, bonus->sprite, 15, false, NULL))
+    {
+      if (state != Lancelot_Powerslash && state != Lancelot_Revert)
+      {
+        Bonus_Unpack(bonus);
+      }
+    }
+    // 身体碰到bonus
+    if (bonus != NULL && collisionDetector(lancelot->sprite, bonus->sprite, 9, true, NULL))
+    {
+      if (state != Lancelot_Revert)
+      {
+        Bonus_GetBy(bonus, lancelot);
+      }
+    }
     node = node->next;
   }
+  /**
+   * 击中keeper
+   */
+  LinkedList *keeperPool = GameState_GetKeeperPool();
+  node = keeperPool->items;
+  while (node)
+  {
+    char *name = (char *)node->item;
+    Keeper *keeper = (Keeper *)EntityManager_GetCharactor(EntityManager_GetInstance(), name);
+    if (keeper != NULL && collisionDetector(lancelot->sprite, (keeper)->sprite, 999, false, NULL))
+    {
+      if (state != Lancelot_Powerslash || strcmp((keeper)->sprite->actions[(keeper)->sprite->actionIndex].name, "fence1") == 0)
+      {
+        Keeper_Unpack(keeper);
+      }
+    }
+    node = node->next;
+  }
+  		/**
+		 * 无敌状态
+		 */
+		if (lancelot->flashLife > 0){
+			lancelot->flashLife--;
+			if (lancelot->flashLife == 0){
+				lancelot->sprite->flash = false;
+			}
+		}
 }
 
 Lancelot *Lancelot_Create(float x, float y, float health)

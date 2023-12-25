@@ -1,6 +1,34 @@
 #include "Bonus.h"
 #include "sdl_app.h"
 #include "EntityManager.h"
+#include "GameState.h"
+#include "Sound.h"
+#include "Effect.h"
+#include "ResourceManager.h"
+#include <string.h>
+#include "util.h"
+
+static int id = 0;
+
+static KV bonusValueMap[] = {
+	{"silverbag", 140},
+	{"silverchest", 400},
+	{"goldbag", 180},
+	{"goldchest", 600},
+	{"jewelrybag", 240},
+	{"jewelrychest", 800},
+	{"fruit", 320},
+	{"fruit-s1", 80},
+	{"fruit-s2", 100},
+	{"bread", 160},
+	{"bread-s", 80},
+	{"salad", 320},
+	{"salad-s", 100},
+	{"chicken", 560},
+	{"chicken-s", 160},
+	{"ham", 120},
+	{"ham-s", 40}
+};
 
 static void actionCallback(void *charactor, const char *actionName, const char *actionParam)
 {
@@ -44,16 +72,16 @@ static void discoverItem(Bonus *bonus)
   }
   else if (strcmp(actionName, "jewelrychest") == 0)
   {
-    Bonus *bonus1 = Bonus_Create("jewelrybag1", sprite->x, sprite->y, "jewelrybag");
+    Bonus *bonus1 = Bonus_Create("jewelrybag", sprite->x, sprite->y, "jewelrybag");
     bonus1->sprite->vx = 3.8;
     bonus1->sprite->vy = -0.95;
-    Bonus *bonus2 = Bonus_Create("jewelrybag2", sprite->x, sprite->y, "jewelrybag");
+    Bonus *bonus2 = Bonus_Create("jewelrybag", sprite->x, sprite->y, "jewelrybag");
     bonus2->sprite->vx = -2.2;
     bonus2->sprite->vy = -0.95;
-    Bonus *bonus3 = Bonus_Create("jewelrybag3", sprite->x, sprite->y, "jewelrybag");
+    Bonus *bonus3 = Bonus_Create("jewelrybag", sprite->x, sprite->y, "jewelrybag");
     bonus3->sprite->vx = 2.2;
     bonus3->sprite->vy = 0.95;
-    Bonus *bonus4 = Bonus_Create("jewelrybag4", sprite->x, sprite->y, "jewelrybag");
+    Bonus *bonus4 = Bonus_Create("jewelrybag", sprite->x, sprite->y, "jewelrybag");
     bonus4->sprite->vx = -3.8;
     bonus4->sprite->vy = 0.95;
   }
@@ -146,7 +174,7 @@ static void simulator(void **charactor)
 {
   Bonus *bonus = (Bonus *)*charactor;
   switch (bonus->state)
-  {
+  { 
   case Bonus_Discover:
     if (bonus->actionLogicCount > 0)
     {
@@ -175,7 +203,7 @@ static void simulator(void **charactor)
       *charactor = NULL;
     }
     break;
-  case Bonus_GetBy:
+  case Bonus_Getby:
     Bonus_Destroy(bonus);
     *charactor = NULL;
     break;
@@ -186,9 +214,12 @@ static void simulator(void **charactor)
 Bonus *Bonus_Create(const char *name, float x, float y, const char *actionName)
 {
   Bonus *bonus = malloc(sizeof(Bonus));
-  strcpy(bonus->name, name);
+  char n[16];
+  sprintf(n, "%s-%i", name, id++);
+  strcpy(bonus->name, n);
   strcpy(bonus->actionName, actionName);
   bonus->actionLogicCount = 7;
+  bonus->state = Bonus_Discover;
   // var spriteID = 'bonus01';			//精灵资源id
   EntityManager_CreateEntity(EntityManager_GetInstance(), bonus->name, bonus);
   Sprite *sprite = EntityManager_GetEntity(EntityManager_GetInstance(), bonus->name);
@@ -205,9 +236,61 @@ Bonus *Bonus_Create(const char *name, float x, float y, const char *actionName)
 
   bonus->sprite = sprite;
   printf("created bonus: %s\n", bonus->name);
+  GameState_AddBonus(bonus);
   return bonus;
 }
 
 void Bonus_Destroy(Bonus *bonus)
 {
+  printf("destroying bonus %s\n", bonus->name);
+  EntityManager_RemoveEntity(EntityManager_GetInstance(), bonus->name);
+  free(bonus);
+}
+
+void Bonus_GetBy(Bonus* bonus, void* charactor) {
+  		if (bonus->state == Bonus_Stand){
+        bonus->state = Bonus_Getby;
+        const char* actionName = bonus->actionName;
+        if (strcmp(actionName, "fruit") == 0 || strcmp(actionName, "fruit-s1") == 0 || strcmp(actionName, "fruit-s2") == 0 || strcmp(actionName, "bread") == 0 || strcmp(actionName, "bread-s") == 0 ||
+         strcmp(actionName, "salad") == 0 || strcmp(actionName, "salad-s") == 0 || strcmp(actionName, "chicken") == 0 || strcmp(actionName, "chicken-s") == 0 || strcmp(actionName, "ham") == 0 || strcmp(actionName, "ham-s") == 0) {
+
+					// if (character.getHealth() >= character.getHealthMax()){
+          char* actionName = bonus->actionName;
+          int bonusValue = KV_GetValue(bonusValueMap, sizeof(bonusValueMap) / sizeof(bonusValueMap[0]), actionName);
+          char buff[16];
+          sprintf(buff, "b%i", bonusValue);
+          Effect_CreateNumber("bonusNumber", bonus->sprite->x, bonus->sprite->y + 30, buff, 30, -35, -1);
+					// 	stageManager.addPoint(bonusValueMap[actionName]);
+					// }else{
+					// 	character.recoverHealth(bonusRecoverMap[actionName]);
+					// }
+          Sound_Play(ResourceManager_GetSound("bonusfood"), 0);
+        } else {
+          char* actionName = bonus->actionName;
+          int bonusValue = KV_GetValue(bonusValueMap, sizeof(bonusValueMap) / sizeof(bonusValueMap[0]), actionName);
+          char buff[16];
+          sprintf(buff, "b%i", bonusValue);
+          Effect_CreateNumber("bonusNumber", bonus->sprite->x, bonus->sprite->y + 20, buff, 30, -25, -1);
+					// new Effect({
+					// 	actionName: 'b' + bonusValueMap[actionName],
+					// });
+					// stageManager.addPoint(bonusValueMap[actionName]);
+          Sound_Play(ResourceManager_GetSound("bonus"), 0);
+        }
+			}
+}
+
+void Bonus_Unpack(Bonus* bonus) {
+  		if (bonus->state == Bonus_Stand){
+        const char* actionName = bonus->actionName;
+        if (strcmp(actionName, "silverchest") == 0 || strcmp(actionName, "goldchest") == 0 || strcmp(actionName, "jewelrychest") == 0 || strcmp(actionName, "fruit") == 0 || strcmp(actionName, "bread") == 0 || strcmp(actionName, "salad") == 0 || strcmp(actionName, "chicken") == 0 || strcmp(actionName, "ham") == 0){
+					bonus->state = Bonus_Unpacking;
+          Sound_Play(ResourceManager_GetSound("blood"), 0);
+					bonus->sprite->blink = true;
+					bonus->actionLogicCount = 16;
+          Effect* effect = Effect_Create("effect1", bonus->sprite->x, bonus->sprite->y, "chopflash", 8);
+          effect->sprite->sy = -30;
+        }
+		}
+
 }
