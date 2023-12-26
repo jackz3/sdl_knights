@@ -22,6 +22,7 @@ typedef struct {
     int mouseY;
     int width;
     int height;
+    int scale;
     void (*eventCallback)(void);
     void (*updateCallback)(Uint32 delta);
     void (*renderCallback)(void);
@@ -31,7 +32,7 @@ typedef struct {
     KeyState keyState;
 } SDLApp;
 
-SDLApp* SDLApp_Create(Uint32 subsystemFlags, const char* title, int x, int y, int w, int h);
+SDLApp* SDLApp_Create(Uint32 subsystemFlags, const char* title, int x, int y, int w, int h, int scale);
 void SDLApp_Destroy();
 void SDLApp_SetEventCallback(void (*func)(void));
 void SDLApp_SetUpdateCallback(void (*func)(Uint32 delta));

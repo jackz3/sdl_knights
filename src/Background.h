@@ -5,24 +5,32 @@
 #include <string.h>
 #include <SDL2/SDL.h> // For Mac, use <SDL.h>
 #include "TexturedRectangle.h"
-#include "Collider.h"
+
+enum BG_Type {
+    BG_Far,
+    BG_Mid,
+    BG_Fore
+};
 
 typedef struct {
     float x;
     float y;
     int w;
     int h;
-    TexturedRectangle* m_texture;
+    TexturedRectangle* textureFar;
+    TexturedRectangle* textureMid;
+    TexturedRectangle* textureFore;
 } BG;
 
-BG* BG_Create(float x, float y, int w, int h);
-void BG_Destroy(BG* bg);
+void BG_Init();
+void BG_Destroy();
 
-void BG_Render(BG* entity);
+void BG_RenderFar();
+void BG_RenderMid();
+void BG_RenderFore();
 
-// Adding Rectangle Components
-void BG_AddTexture(BG* bg, SDL_Renderer* renderer, const char* path, const SDL_Rect* srcRect);
+void BG_SetTexture(enum BG_Type type, const char* path);
 
-void BG_SetPosition(BG* bg, float x, float y);
+void BG_SetPosition(float x, float y);
 
 #endif

@@ -5,9 +5,9 @@
 #include "Sprite.h"
 #include "cJSON.h"
 #include "util.h"
-#include "config.h"
 #include "sdl_app.h"
 
+static int SCALE = 1;
 Sprite *Sprite_Create()
 {
   Sprite *sprite = (Sprite *)malloc(sizeof(Sprite));

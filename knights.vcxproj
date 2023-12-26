@@ -163,6 +163,7 @@
     <ClCompile Include="src\Sprite.c" />
     <ClCompile Include="src\stage1.c" />
     <ClCompile Include="src\StageManager.c" />
+    <ClCompile Include="src\Text.c" />
     <ClCompile Include="src\TexturedRectangle.c" />
     <ClCompile Include="src\util.c" />
   </ItemGroup>
@@ -186,6 +187,7 @@
     <ClInclude Include="src\Sound.h" />
     <ClInclude Include="src\Sprite.h" />
     <ClInclude Include="src\StageManager.h" />
+    <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\TexturedRectangle.h" />
     <ClInclude Include="src\util.h" />
   </ItemGroup>

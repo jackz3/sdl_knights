@@ -37,6 +37,9 @@ void TexturedRectangle_InitDefaults(TexturedRectangle* rectangle) {
 
 void TexturedRectangle_Destroy(TexturedRectangle* rectangle) {
     if (rectangle != NULL) {
+        if (rectangle->srcRect != NULL) {
+            free(rectangle->srcRect);
+        }
         SDL_DestroyTexture(rectangle->texture);
         free(rectangle);
     }

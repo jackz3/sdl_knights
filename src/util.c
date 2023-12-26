@@ -76,6 +76,20 @@ char* toLowerCase(const char* str) {
     return ret;
 }
 
+char* toUpperCase(const char* str) {
+    int i = 0;
+    int len = strlen(str);
+    char* ret = (char*)malloc(sizeof(char) * (len + 1));
+    if (ret == NULL) {
+      return NULL;
+    }
+    while (str[i] != '\0') {
+        ret[i++] = toupper(str[i]);
+    }
+    ret[len] = '\0';
+    return ret;
+}
+
 LinkedList* LinkedList_Create() {
   LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
   list->items = NULL;

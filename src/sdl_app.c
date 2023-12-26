@@ -5,7 +5,7 @@
 
 static SDLApp* app = NULL;
 
-SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, int w, int h)
+SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, int w, int h, int scale)
 {
     app = (SDLApp *)malloc(sizeof(SDLApp));
     app->window = NULL;
@@ -16,6 +16,7 @@ SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, in
     app->mouseY = 0;
     app->width = w;
     app->height = h;
+    app->scale = scale;
     app->eventCallback = NULL;
     app->updateCallback = NULL;
     app->renderCallback = NULL;
@@ -35,9 +36,9 @@ SDLApp *SDLApp_Create(Uint32 subsystemFlags, const char *title, int x, int y, in
 
     printf("SDL video system is ready to go\n");
 
-    app->window = SDL_CreateWindow(title, x, y, w, h, SDL_WINDOW_SHOWN);
+    app->window = SDL_CreateWindow(title, x, y, w * scale, h * scale, SDL_WINDOW_SHOWN);
     app->renderer = SDL_CreateRenderer(app->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
+    SDL_RenderSetLogicalSize(app->renderer, w, h);
     srand(time(0));
     // return app;
 }
@@ -98,7 +99,7 @@ static void mainloop(void *app_) /* this will run often, possibly at the monitor
         app->updateCallback(delta + elap);
         delta = elap;
     }
-    SDL_SetRenderDrawColor(app->renderer, 40, 45, 52, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(app->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(app->renderer);
     if (app->renderCallback != NULL)
     {

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "StageManager.h"
 #include "sdl_app.h"
 #include "Lancelot.h"
@@ -7,6 +8,8 @@
 #include "Prophet.h"
 #include "GameState.h"
 #include "ResourceManager.h"
+#include "Text.h"
+#include "Background.h"
 
 static Lancelot *lancelot;
 
@@ -75,7 +78,9 @@ static void stage1Update(Uint32 delta)
 }
 static void stage1Render()
 {
+    BG_RenderMid();
     EntityManager_Render(EntityManager_GetInstance());
+    BG_RenderFore();
 }
 static void stage1Destroy(Stage *stage)
 {
@@ -94,6 +99,9 @@ Stage *Stage_Create_1(const char *name)
     stage->render = stage1Render;
     stage->destroy = stage1Destroy;
 
+    BG_SetTexture(BG_Far, "./assets/images/stage1_1_b.png");
+    BG_SetTexture(BG_Mid, "./assets/images/stage1_1_m.png");
+    BG_SetTexture(BG_Fore, "./assets/images/stage1_1_f.png");
     // playerPool.push(lancelot = new Lancelot({x: -3, y: 204, health:lancelotHealth || 80}));
     lancelot = Lancelot_Create(-3, 204, 80);
     GameState_AddKeeper(Keeper_Create(464, 164, "cask", "jewelrybag", "cask1"));
@@ -104,5 +112,19 @@ Stage *Stage_Create_1(const char *name)
 
     ResourceManager_LoadMusic("bg", "./assets/sounds/bg.mp3");
     // Music_Play(ResourceManager_GetMusic(rm, "bg"), -1);
+
+    LinkedList *textPool = GameState_GetTextPool();
+    if (textPool->itemCount == 0)
+    {
+        int point = GameState_GetLancelotPoint();
+        char s[16];
+        sprintf(s, "%d", point);
+        Text *t = Text_Create(s, 127 - strlen(s) * 8, 0);
+        GameState_AddText(t);
+        int life = GameState_GetLancelotLife();
+        sprintf(s, "%d", life);
+        Text *lifeText = Text_Create(s, 127 - strlen(s) * 8, 8);
+        GameState_AddText(lifeText);
+    }
     return stage;
 }

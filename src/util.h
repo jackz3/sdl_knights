@@ -12,6 +12,7 @@ int rand_int(int min, int max);
 
 char** string_split(const char* str, const char* delim, int* len);
 char* toLowerCase(const char* str);
+char* toUpperCase(const char* str);
 
 typedef struct ItemNode {
   void* item;

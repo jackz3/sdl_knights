@@ -17,17 +17,6 @@
 #include "StageManager.h"
 #include "GameState.h"
 
-// render manager
-// res loader
-// scroll manager
-
-// SDLApp *app;
-
-BG* farBg;
-BG* midBg;
-BG* nearBg;
-
-GameState *gameState;
 
 // Callback function for handling events
 void HandleEvents()
@@ -81,19 +70,18 @@ void HandleUpdate(Uint32 delta)
 // Handle the rendering of the game entities
 void HandleRendering()
 {
-    Camera_Adjust();
-    float sx = Camera_GetX() * 0.7;
-    TexturedRectangle_SetSrcPosition(farBg->m_texture, sx, 0);
-    BG_Render(farBg);
-    Camera_Adjust();
-    TexturedRectangle_SetSrcPosition(midBg->m_texture, Camera_GetX(), 0);
-    BG_Render(midBg);
+    BG_RenderFar();
     printf("rendering\n");
     Stage_Render();
 
-    Camera_Adjust();
-    TexturedRectangle_SetSrcPosition(nearBg->m_texture, Camera_GetX(), 0);
-    BG_Render(nearBg);
+    LinkedList *textPool = GameState_GetTextPool();
+    ItemNode *node = textPool->items;
+    while (node)
+    {
+        Text* text = (Text*)node->item;
+        Text_Show(text);
+        node = node->next;
+    }
 }
 
 Uint32 my_callbackfunc(Uint32 interval, void *param)
@@ -107,7 +95,7 @@ int main(int argc, char *argv[])
 {
     // Setup the SDLApp
     const char *title = "SDL2 Knights_Of_Round";
-    SDLApp_Create(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER, title, 80, 80, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
+    SDLApp_Create(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER, title, 80, 80, VIRTUALWIDTH, VIRTUALHEIGHT, SCALE);
     SDLApp_SetMaxFrameRate(16);
 
     Camera_Create();
@@ -115,13 +103,7 @@ int main(int argc, char *argv[])
     ResourceManager_Init();
     ResourceManager_LoadFont("peaberry", "./assets/fonts/PeaberryMono.ttf");
 
-    farBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
-    SDL_Rect srcRect = {0, 0, VIRTUALWIDTH, VIRTUALHEIGHT};
-    BG_AddTexture(farBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_b.png", &srcRect);
-    midBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
-    BG_AddTexture(midBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_m.png", &srcRect);
-    nearBg = BG_Create(0, 0, VIRTUALWIDTH * SCALE, VIRTUALHEIGHT * SCALE);
-    BG_AddTexture(nearBg, SDLApp_GetRenderer(), "./assets/images/stage1_1_f.png", &srcRect);
+    BG_Init();
 
     char soundList[][32] = {
 			"powerwave",

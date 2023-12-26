@@ -1,0 +1,33 @@
+{
+  "imageFilename": "font.png",
+  "frames": [
+    {
+      "c": "315_47_25_21",
+      "i": "0",
+      "d": "frame0",
+      "n": "Frame0"
+    }
+  ],
+  "actions": [
+    {
+      "n": "test",
+      "v": "action0",
+      "f": [
+        {
+          "u": "6",
+          "l": "0",
+          "d": "actFrame1",
+          "f": "frame0",
+          "x": "-12",
+          "y": "-10",
+          "r": {
+            "b": [],
+            "a": []
+          }
+        }
+      ]
+    }
+  ],
+  "uidFrame": "1",
+  "uidAction": "2"
+}
